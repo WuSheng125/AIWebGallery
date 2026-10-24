@@ -1,0 +1,15 @@
+{
+  "name": "gargantua-observation-deck",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GARGANTUA — a real-time relativistic black hole rendered with WebGL2",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --format=iife --target=es2020 --outfile=app.js",
+    "watch": "esbuild src/main.js --bundle --format=iife --target=es2020 --outfile=app.js --watch",
+    "serve": "node tools/serve.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

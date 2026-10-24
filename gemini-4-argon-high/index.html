@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GARGANTUA 卡冈图雅 — 《星际穿越》广义相对论黑洞交互式观测台</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Full-Viewport Three.js WebGL2 Geodesic Raymarching Canvas -->
+  <div id="viewport-container">
+    <canvas id="gl-canvas"></canvas>
+  </div>
+
+  <!-- Top Telemetry & Branding HUD -->
+  <header class="hud-top-bar">
+    <div class="brand-card">
+      <div class="brand-emblem" aria-hidden="true"></div>
+      <div class="brand-titles">
+        <span class="brand-kicker">ENDURANCE DEEP SPACE OBSERVATORY · DNGR ENGINE</span>
+        <h1 class="brand-title">GARGANTUA 卡冈图雅 · 广义相对论黑洞模拟</h1>
+      </div>
+    </div>
+
+    <div class="telemetry-strip" aria-label="天体物理实时遥测">
+      <div class="telemetry-item">
+        <span class="telemetry-label">史瓦西半径 R<sub>s</sub></span>
+        <span class="telemetry-value" id="tel-rs">2.95×10⁸ km (1.97 AU)</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">内稳定轨道 R<sub>ISCO</sub></span>
+        <span class="telemetry-value" id="tel-isco">0.91 R<sub>s</sub></span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">光子球 R<sub>ph</sub></span>
+        <span class="telemetry-value" id="tel-ph">0.69 R<sub>s</sub></span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">内缘流速 v/c</span>
+        <span class="telemetry-value" id="tel-beta">0.64 c</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">近域时间膨胀</span>
+        <span class="telemetry-value cyan" id="tel-dilation">1.38×</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">渲染性能</span>
+        <span class="telemetry-value cyan" id="tel-fps">60 FPS</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Quick Action Buttons -->
+  <div class="floating-toolbar">
+    <button type="button" class="icon-btn" id="btn-screenshot" title="保存当前高清黑洞渲染截图">
+      <span>📸 截图保存</span>
+    </button>
+    <button type="button" class="icon-btn" id="btn-cinema" title="纯享电影模式 (快捷键 H)">
+      <span id="label-cinema">🎬 纯享模式</span>
+    </button>
+    <button type="button" class="icon-btn" id="btn-toggle-sidebar" title="展开/收起参数控制侧边栏">
+      <span id="label-sidebar">⚙️ 收起面板</span>
+    </button>
+  </div>
+
+  <!-- Bottom Left Camera Angle Quick Dock & Mouse Hints -->
+  <footer class="hud-bottom-bar">
+    <div class="camera-quick-dock">
+      <span>视角切换：</span>
+      <button type="button" class="quick-btn" data-cam="cinematic">电影经典倾角</button>
+      <button type="button" class="quick-btn" data-cam="edge">赤道极薄切面</button>
+      <button type="button" class="quick-btn" data-cam="high">高倾角俯瞰</button>
+      <button type="button" class="quick-btn" data-cam="polar">极轴正俯视</button>
+      <button type="button" class="quick-btn" data-cam="grazing">抵近事件视界</button>
+    </div>
+
+    <div class="interaction-hint">
+      <span class="hint-badge"><span class="hint-key">左键拖拽</span> 360°环绕旋转</span>
+      <span class="hint-badge"><span class="hint-key">右键/Shift+拖拽</span> 电影镜头横滚</span>
+      <span class="hint-badge"><span class="hint-key">滚轮</span> 缩放距离</span>
+      <span class="hint-badge"><span class="hint-key">双击</span> 复位视角</span>
+    </div>
+  </footer>
+
+  <!-- Right Interactive Parameter Sidebar -->
+  <aside class="sidebar-panel" id="sidebar-panel" aria-label="黑洞参数控制面板">
+    <div class="sidebar-header">
+      <div class="sidebar-header-title">
+        <span class="status-dot"></span>
+        <span>相对论天体参数控制台</span>
+      </div>
+      <button type="button" class="reset-btn" id="btn-reset-defaults">恢复卡冈图雅默认</button>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Section 1: Curated Presets -->
+      <section class="control-section">
+        <div class="section-header">
+          <span class="section-title">电影与天体物理预设</span>
+          <span class="section-tag">PRESETS</span>
+        </div>
+        <div class="preset-grid" id="preset-grid">
+          <button type="button" class="preset-card active" data-preset="gargantua">
+            <div class="preset-name">卡冈图雅 (Gargantua · 星际穿越)</div>
+            <div class="preset-desc">基普·索恩引力透镜模型 · 暖金等离子吸积盘与上下透镜光弧</div>
+          </button>
+          <button type="button" class="preset-card" data-preset="millerOrbit">
+            <div class="preset-name">米勒行星近轨 (0.998c 极速克尔黑洞)</div>
+            <div class="preset-desc">逼近光子球与ISCO内稳定轨道 · 显著多普勒集束冷暖不对称</div>
+          </button>
+          <button type="button" class="preset-card" data-preset="quasarJet">
+            <div class="preset-name">高能类星体与极向喷流 (Relativistic Quasar)</div>
+            <div class="preset-desc">14500K蓝白高温吸积盘 · 开启南北极相对论磁流体喷流</div>
+          </button>
+          <button type="button" class="preset-card" data-preset="ehtM87">
+            <div class="preset-name">M87* 事件视界望远镜 (EHT Shadow)</div>
+            <div class="preset-desc">65亿倍太阳质量 · 低倾角厚环状亚毫米波热辐射与新月亮环</div>
+          </button>
+          <button type="button" class="preset-card" data-preset="einsteinLens">
+            <div class="preset-name">纯引力透镜与爱因斯坦环 (Einstein Ring)</div>
+            <div class="preset-desc">隐藏吸积盘 · 直观观测背景星系引力畸变、爱因斯坦环与度规网格</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Section 2: Black Hole Spacetime Metric -->
+      <section class="control-section">
+        <div class="section-header">
+          <span class="section-title">1. 黑洞时空度规与引力透镜</span>
+          <span class="section-tag">KERR METRIC</span>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">黑洞质量 M (百万太阳质量)</span>
+            <span class="control-val" id="val-massSolar">100 M☉×10⁶</span>
+          </div>
+          <input type="range" id="inp-massSolar" min="10" max="2000" step="10" value="100" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">克尔无量纲自旋 a* (Kerr Spin)</span>
+            <span class="control-val" id="val-spin">0.960 c</span>
+          </div>
+          <input type="range" id="inp-spin" min="0" max="0.999" step="0.005" value="0.96" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">引力透镜光线弯曲强度</span>
+            <span class="control-val" id="val-lensingStrength">1.00×</span>
+          </div>
+          <input type="range" id="inp-lensingStrength" min="0.0" max="1.8" step="0.02" value="1.0" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">事件视界半径尺度 R<sub>s</sub></span>
+            <span class="control-val" id="val-horizonRadius">1.00 R<sub>s</sub></span>
+          </div>
+          <input type="range" id="inp-horizonRadius" min="0.5" max="1.65" step="0.02" value="1.0" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">光子球临界亮环强度</span>
+            <span class="control-val" id="val-photonRingIntensity">1.35</span>
+          </div>
+          <input type="range" id="inp-photonRingIntensity" min="0.0" max="2.8" step="0.05" value="1.35" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">参考系拖拽阴影偏移 (Lense-Thirring)</span>
+            <span class="control-val" id="val-shadowAsymmetry">0.85</span>
+          </div>
+          <input type="range" id="inp-shadowAsymmetry" min="0.0" max="1.5" step="0.05" value="0.85" />
+        </div>
+      </section>
+
+      <!-- Section 3: Relativistic Accretion Disk -->
+      <section class="control-section">
+        <div class="section-header">
+          <span class="section-title">2. 相对论吸积盘与等离子体</span>
+          <span class="section-tag">ACCRETION DISK</span>
+        </div>
+
+        <div class="toggle-grid">
+          <label class="toggle-chip">
+            <span>显示吸积盘</span>
+            <input type="checkbox" id="chk-diskEnabled" checked />
+          </label>
+          <label class="toggle-chip">
+            <span>时空度规网格</span>
+            <input type="checkbox" id="chk-spacetimeGrid" />
+          </label>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">辐射光谱与色彩模型</span>
+          </div>
+          <select class="control-select" id="sel-colorMode">
+            <option value="0">卡冈图雅电影暖金 (Interstellar Gold)</option>
+            <option value="1">物理黑体辐射定律 (Planck Blackbody K)</option>
+            <option value="2">高能类星体蓝紫 (Quasar UV-Blue)</option>
+            <option value="3">M87* 亚毫米深红余烬 (Crimson Ember)</option>
+            <option value="4">磁星极光青紫 (Magnetar Cyan-Violet)</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">相对论多普勒集束效应 (明暗不对称)</span>
+            <span class="control-val" id="val-dopplerBeaming">0.62</span>
+          </div>
+          <input type="range" id="inp-dopplerBeaming" min="0.0" max="1.5" step="0.02" value="0.62" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">吸积盘峰值温度 T<sub>eff</sub></span>
+            <span class="control-val" id="val-diskTemperature">5400 K</span>
+          </div>
+          <input type="range" id="inp-diskTemperature" min="1800" max="20000" step="100" value="5400" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">内缘轨道缩放 (相对于 R<sub>ISCO</sub>)</span>
+            <span class="control-val" id="val-diskInnerScale">1.00×</span>
+          </div>
+          <input type="range" id="inp-diskInnerScale" min="0.65" max="2.2" step="0.02" value="1.0" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">吸积盘外缘半径 R<sub>out</sub></span>
+            <span class="control-val" id="val-diskOuterRadius">11.5 R<sub>s</sub></span>
+          </div>
+          <input type="range" id="inp-diskOuterRadius" min="4.5" max="20.0" step="0.2" value="11.5" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">吸积盘垂直几何厚度 H/R</span>
+            <span class="control-val" id="val-diskThickness">0.14</span>
+          </div>
+          <input type="range" id="inp-diskThickness" min="0.03" max="0.50" step="0.01" value="0.14" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">等离子体发光密度</span>
+            <span class="control-val" id="val-diskDensity">1.45</span>
+          </div>
+          <input type="range" id="inp-diskDensity" min="0.2" max="3.0" step="0.05" value="1.45" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">开普勒差异旋转角速度</span>
+            <span class="control-val" id="val-diskRotationSpeed">0.85</span>
+          </div>
+          <input type="range" id="inp-diskRotationSpeed" min="0.0" max="2.5" step="0.05" value="0.85" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">磁流体螺旋纹理对比度</span>
+            <span class="control-val" id="val-diskTurbulence">1.15</span>
+          </div>
+          <input type="range" id="inp-diskTurbulence" min="0.0" max="1.8" step="0.05" value="1.15" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">南北极相对论喷流强度 (Polar Jets)</span>
+            <span class="control-val" id="val-jetIntensity">0.00</span>
+          </div>
+          <input type="range" id="inp-jetIntensity" min="0.0" max="2.0" step="0.05" value="0.0" />
+        </div>
+      </section>
+
+      <!-- Section 4: Background Starfield & IMAX Post-Processing -->
+      <section class="control-section">
+        <div class="section-header">
+          <span class="section-title">3. 深空星场与 IMAX 光学后处理</span>
+          <span class="section-tag">COSMOS &amp; OPTICS</span>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">背景恒星密度与亮度</span>
+            <span class="control-val" id="val-starDensity">1.15</span>
+          </div>
+          <input type="range" id="inp-starDensity" min="0.0" max="2.5" step="0.05" value="1.15" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">银河系尘埃带与星云亮度</span>
+            <span class="control-val" id="val-nebulaIntensity">0.85</span>
+          </div>
+          <input type="range" id="inp-nebulaIntensity" min="0.0" max="2.0" step="0.05" value="0.85" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">爱因斯坦环星光透镜放大率</span>
+            <span class="control-val" id="val-einsteinRingBoost">1.25</span>
+          </div>
+          <input type="range" id="inp-einsteinRingBoost" min="0.0" max="2.5" step="0.05" value="1.25" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">HDR 辉光散射强度 (Bloom)</span>
+            <span class="control-val" id="val-bloomStrength">0.95</span>
+          </div>
+          <input type="range" id="inp-bloomStrength" min="0.0" max="2.4" step="0.05" value="0.95" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">IMAX 65mm 变形宽银幕横向耀斑</span>
+            <span class="control-val" id="val-anamorphicFlare">0.65</span>
+          </div>
+          <input type="range" id="inp-anamorphicFlare" min="0.0" max="1.8" step="0.05" value="0.65" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">ACES 胶片曝光度 (Exposure)</span>
+            <span class="control-val" id="val-exposure">1.12</span>
+          </div>
+          <input type="range" id="inp-exposure" min="0.4" max="2.2" step="0.02" value="1.12" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">镜头边缘光谱色散</span>
+            <span class="control-val" id="val-chromaticAberration">0.25</span>
+          </div>
+          <input type="range" id="inp-chromaticAberration" min="0.0" max="1.0" step="0.02" value="0.25" />
+        </div>
+      </section>
+
+      <!-- Section 5: Camera & Raymarching Performance -->
+      <section class="control-section">
+        <div class="section-header">
+          <span class="section-title">4. 观测相机与光线步进性能</span>
+          <span class="section-tag">CAMERA &amp; QUALITY</span>
+        </div>
+
+        <div class="toggle-grid">
+          <label class="toggle-chip">
+            <span>自动轨道巡航</span>
+            <input type="checkbox" id="chk-autoRotate" checked />
+          </label>
+          <div class="toggle-chip">
+            <span>画质档位</span>
+            <select id="sel-qualityPreset" style="background:transparent;color:var(--accent-gold-bright);border:none;font-size:11.5px;outline:none;cursor:pointer;">
+              <option value="ultra">极致 Ultra</option>
+              <option value="high" selected>高画质 High</option>
+              <option value="balanced">均衡 Balanced</option>
+              <option value="performance">高帧率 Fast</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">观测距离 D (史瓦西半径倍数)</span>
+            <span class="control-val" id="val-camDistance">13.8 R<sub>s</sub></span>
+          </div>
+          <input type="range" id="inp-camDistance" min="3.4" max="38.0" step="0.2" value="13.8" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">观测俯仰倾角 (Elevation)</span>
+            <span class="control-val" id="val-camElevation">7.2°</span>
+          </div>
+          <input type="range" id="inp-camElevation" min="-85" max="85" step="0.5" value="7.2" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">电影镜头横滚角 (Dutch Roll)</span>
+            <span class="control-val" id="val-camRoll">-8.5°</span>
+          </div>
+          <input type="range" id="inp-camRoll" min="-90" max="90" step="0.5" value="-8.5" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">镜头焦距视场角 (FOV)</span>
+            <span class="control-val" id="val-camFov">44°</span>
+          </div>
+          <input type="range" id="inp-camFov" min="24" max="80" step="1" value="44" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">测地线光线步进精度 (Ray Steps)</span>
+            <span class="control-val" id="val-raySteps">136 步</span>
+          </div>
+          <input type="range" id="inp-raySteps" min="64" max="220" step="4" value="136" />
+        </div>
+
+        <div class="control-row">
+          <div class="control-label-line">
+            <span class="control-label">内部渲染分辨率倍率</span>
+            <span class="control-val" id="val-renderScale">1.00×</span>
+          </div>
+          <input type="range" id="inp-renderScale" min="0.5" max="1.35" step="0.05" value="1.0" />
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- Local Three.js & Application Modules -->
+  <script src="vendor/three.min.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/shaders.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

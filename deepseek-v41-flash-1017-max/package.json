@@ -1,0 +1,19 @@
+{
+  "name": "gargantua-horizon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GARGANTUA — a cinematic, real-time Schwarzschild black hole observatory built with WebGL2.",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "serve": "node serve.mjs"
+  },
+  "keywords": [
+    "black-hole",
+    "webgl2",
+    "glsl",
+    "gravitational-lensing",
+    "interstellar"
+  ],
+  "license": "MIT"
+}

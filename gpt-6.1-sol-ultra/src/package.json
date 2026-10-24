@@ -1,0 +1,8 @@
+{
+  "name": "gargantua-observatory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An interactive WebGL2 black hole observatory",
+  "scripts": { "dev": "node server.mjs", "start": "node server.mjs", "build": "node build.mjs", "check": "node --check app.js && node --check renderer.js && node --check shaders.js && node --check server.mjs && node --check build.mjs" }
+}

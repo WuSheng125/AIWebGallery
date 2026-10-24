@@ -1,0 +1,13 @@
+# Generated publishing output and local state
+/_site/
+/.local/
+**/node_modules/
+**/.npm-cache/
+**/.temp/
+*.log
+.DS_Store
+Thumbs.db
+
+# Kimi: keep source, configuration, lockfile, and dist; omit local capture tools.
+/kimi-k3.1-pro-max/artifacts/
+/kimi-k3.1-pro-max/scripts/

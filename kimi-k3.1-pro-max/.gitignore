@@ -1,0 +1,7 @@
+node_modules/
+.npm-cache/
+.temp/
+artifacts/
+scripts/
+*.local
+.DS_Store

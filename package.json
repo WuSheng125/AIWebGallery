@@ -1,0 +1,15 @@
+{
+  "name": "ai-web-gallery",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "不同 AI 生成的黑洞交互网页展示与对比入口",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "node scripts/build-gallery.mjs",
+    "serve": "node scripts/serve.mjs",
+    "preview": "node scripts/serve.mjs"
+  }
+}

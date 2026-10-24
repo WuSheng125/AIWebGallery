@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#050607" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="卡冈图雅黑洞实时引力透镜模拟，探索吸积盘、多普勒效应与星光弯曲。"
+    />
+    <title>卡冈图雅 · Gargantua</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="scene" aria-label="卡冈图雅黑洞交互式三维场景"></div>
+
+    <div id="loading" class="loading-screen" role="status" aria-live="polite">
+      <div class="loading-orbit" aria-hidden="true">
+        <span class="loading-orbit__ring"></span>
+        <span class="loading-orbit__core"></span>
+      </div>
+      <p class="loading-screen__title">正在进入引力场</p>
+      <p class="loading-screen__detail">INITIALIZING SPACETIME</p>
+    </div>
+
+    <section id="error-panel" class="error-screen" role="alert" hidden>
+      <div class="error-screen__card">
+        <p class="eyebrow">RENDERER OFFLINE</p>
+        <h1>无法进入引力场</h1>
+        <p>
+          渲染器未能启动。请确认浏览器已启用硬件加速，并使用支持 WebGL 2 的现代浏览器后重试。
+        </p>
+      </div>
+    </section>
+
+    <noscript>
+      <div class="noscript-notice">此模拟需要 JavaScript。请启用 JavaScript 后重新载入页面。</div>
+    </noscript>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050505" />
+  <meta name="description" content="GARGANTUA — 基于 WebGL2 与史瓦西零测地线光线追踪的《星际穿越》卡冈图雅黑洞交互式观测台。" />
+  <title>GARGANTUA · 卡冈图雅黑洞观测台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070707'/%3E%3Cellipse cx='32' cy='32' rx='23' ry='10' fill='none' stroke='%23e8bf82' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23000' stroke='%23f7e8cc' stroke-width='1.5'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="viewport" id="viewport">
+    <canvas id="space" aria-label="卡冈图雅黑洞实时渲染画面。拖拽旋转视角，滚轮缩放，双击复位。"></canvas>
+
+    <div class="scene-grade" aria-hidden="true"></div>
+    <div class="frame-marks" aria-hidden="true">
+      <span class="frame-mark frame-mark--tl"></span>
+      <span class="frame-mark frame-mark--tr"></span>
+      <span class="frame-mark frame-mark--bl"></span>
+      <span class="frame-mark frame-mark--br"></span>
+    </div>
+
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg viewBox="0 0 52 52" fill="none">
+            <defs>
+              <linearGradient id="brandGradient" x1="4" y1="8" x2="47" y2="45" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fff3dc" />
+                <stop offset="0.42" stop-color="#e7bd7e" />
+                <stop offset="1" stop-color="#8f6434" />
+              </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="26" rx="20.5" ry="8.2" transform="rotate(-16 26 26)" stroke="url(#brandGradient)" stroke-width="1.1" opacity=".92"/>
+            <ellipse cx="26" cy="26" rx="14.7" ry="5.5" transform="rotate(-16 26 26)" stroke="#f3d6a5" stroke-width=".65" opacity=".5"/>
+            <circle cx="26" cy="26" r="7.6" stroke="#f7e9d2" stroke-width="1.2" opacity=".9"/>
+            <circle cx="26" cy="26" r="2.8" fill="#0a0908" stroke="#d8a869" stroke-width=".8"/>
+            <circle cx="45.2" cy="13.4" r="1.2" fill="#f8e6c7"/>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-title">GARGANTUA<span class="brand-edition">/ 01</span></div>
+          <div class="brand-sub">EVENT HORIZON OBSERVATORY <span>·</span> 卡冈图雅观测站</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="status-pill" title="实时模拟状态">
+          <span class="status-light" aria-hidden="true"></span>
+          <span class="status-pill__label">LIVE</span>
+          <span class="status-pill__divider" aria-hidden="true"></span>
+          <span class="status-pill__value" id="hud-fps">-- FPS</span>
+        </div>
+        <button class="icon-button" id="btn-auto-orbit" type="button" aria-label="开启自动环绕" title="自动环绕 (Space)" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20.2 8.2A8.5 8.5 0 0 0 5.4 6.4L3.5 8.3M3.5 8.3V3.9M3.5 8.3h4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.8 15.8a8.5 8.5 0 0 0 14.8 1.8l1.9-1.9m0 0v4.4m0-4.4h-4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="icon-button" id="btn-fullscreen" type="button" aria-label="进入全屏" title="全屏 (F)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.5 4H4v4.5M15.5 4H20v4.5M20 15.5V20h-4.5M4 15.5V20h4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-button" id="btn-hide-ui" type="button" aria-label="隐藏界面" title="沉浸模式 (H)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.6 12s3.4-6.2 9.4-6.2 9.4 6.2 9.4 6.2-3.4 6.2-9.4 6.2S2.6 12 2.6 12Z" stroke="currentColor" stroke-width="1.4"/>
+            <circle cx="12" cy="12" r="2.7" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M4 20 20 4" stroke="currentColor" stroke-width="1.2" opacity=".5"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="target-lock" id="target-lock" aria-hidden="true">
+      <span class="target-line target-line--left"></span>
+      <span class="target-label"><i></i> PRIMARY TARGET / GARGANTUA</span>
+      <span class="target-line target-line--right"></span>
+    </div>
+
+    <aside class="console" id="console" aria-label="观测参数控制台">
+      <div class="console-sheen" aria-hidden="true"></div>
+      <header class="console-head">
+        <div class="console-heading">
+          <span class="eyebrow">OBSERVATION CONSOLE</span>
+          <h1>观测参数</h1>
+        </div>
+        <div class="console-head-actions">
+          <span class="console-metric" title="当前渲染帧率"><b id="console-fps">--</b> FPS</span>
+          <button class="console-close" id="btn-close-console" type="button" aria-label="收起参数面板" title="收起面板 (P)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15.5 5.5 9 12l6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="console-scroll" id="console-scroll">
+        <section class="preset-section">
+          <div class="section-head"><span>影像预设</span><span class="section-tag">PRESETS</span></div>
+          <div class="preset-grid" id="preset-grid" role="group" aria-label="影像预设"></div>
+        </section>
+        <div class="control-sections" id="control-sections"></div>
+        <div class="console-note">
+          <span class="console-note__mark">NOTE</span>
+          <p>画面由史瓦西零测地线实时光线追踪生成。调整透镜强度可观察阴影、光子环与吸积盘次级像的变化。</p>
+        </div>
+      </div>
+
+      <footer class="console-footer">
+        <div class="quality-row">
+          <span class="quality-label">渲染质量 <small>QUALITY</small></span>
+          <div class="quality-segments" id="quality-segments" role="group" aria-label="渲染质量">
+            <button type="button" data-quality="auto" class="is-active">自动</button>
+            <button type="button" data-quality="high">精致</button>
+            <button type="button" data-quality="balanced">均衡</button>
+            <button type="button" data-quality="performance">流畅</button>
+          </div>
+        </div>
+        <div class="console-actions">
+          <button class="button button--quiet" id="btn-reset" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 9.2A8 8 0 1 1 4 14.7M4.5 9.2V4.6m0 4.6h4.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            恢复默认
+          </button>
+          <button class="button button--primary" id="btn-capture" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="12.5" rx="2.2" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12.7" r="3.2" stroke="currentColor" stroke-width="1.4"/><path d="M8.5 6.5 9.8 4h4.4l1.3 2.5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            保存影像
+          </button>
+        </div>
+      </footer>
+    </aside>
+
+    <button class="console-reopen" id="btn-open-console" type="button" aria-label="展开参数面板">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>观测参数</span>
+    </button>
+
+    <footer class="bottom-deck" id="bottom-deck">
+      <div class="telemetry" aria-label="观测数据">
+        <div class="telemetry-item">
+          <span class="telemetry-label">OBSERVER RANGE</span>
+          <strong id="tele-distance">22.0 <small>Rs</small></strong>
+        </div>
+        <span class="telemetry-sep" aria-hidden="true"></span>
+        <div class="telemetry-item">
+          <span class="telemetry-label">INCLINATION</span>
+          <strong id="tele-elevation">+5.5<small>°</small></strong>
+        </div>
+        <span class="telemetry-sep" aria-hidden="true"></span>
+        <div class="telemetry-item">
+          <span class="telemetry-label">FIELD OF VIEW</span>
+          <strong id="tele-fov">44.0<small>°</small></strong>
+        </div>
+        <span class="telemetry-sep" aria-hidden="true"></span>
+        <div class="telemetry-item">
+          <span class="telemetry-label">RENDER</span>
+          <strong id="tele-resolution">--</strong>
+        </div>
+      </div>
+
+      <div class="gesture-hint" id="gesture-hint">
+        <span class="gesture-mouse" aria-hidden="true"><i></i></span>
+        <span class="hint-desktop">拖拽环绕 <b>·</b> 滚轮缩放 <b>·</b> 双击复位</span>
+        <span class="hint-touch">单指环绕 <b>·</b> 双指缩放 <b>·</b> 双击复位</span>
+      </div>
+
+      <div class="coordinate-stamp" aria-hidden="true">
+        <span>RA 17<sup>h</sup>45<sup>m</sup>40<sup>s</sup></span>
+        <span>DEC −29° 00′ 28″</span>
+      </div>
+    </footer>
+
+    <button class="reveal-ui" id="btn-reveal-ui" type="button" aria-label="显示界面">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.6 12s3.4-6.2 9.4-6.2 9.4 6.2 9.4 6.2-3.4 6.2-9.4 6.2S2.6 12 2.6 12Z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="2.7" stroke="currentColor" stroke-width="1.4"/></svg>
+      <span>显示界面</span>
+    </button>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-mark" aria-hidden="true"></span>
+      <span id="toast-text">影像已保存</span>
+    </div>
+
+    <div class="error-screen" id="error-screen" hidden>
+      <div class="error-card">
+        <span class="eyebrow">SIGNAL LOST</span>
+        <h2>无法建立时空链路</h2>
+        <p id="error-message">当前浏览器或设备不支持 WebGL2，请尝试更新浏览器并确认硬件加速已开启。</p>
+        <button class="button button--primary" id="btn-error-reload" type="button">重新连接</button>
+      </div>
+    </div>
+
+    <div class="boot" id="boot">
+      <div class="boot-field" aria-hidden="true">
+        <span class="boot-orbit boot-orbit--one"></span>
+        <span class="boot-orbit boot-orbit--two"></span>
+        <span class="boot-core"></span>
+      </div>
+      <div class="boot-inner">
+        <span class="boot-eyebrow">EVENT HORIZON OBSERVATORY</span>
+        <div class="boot-title">GARGANTUA</div>
+        <div class="boot-sub">卡冈图雅 · 实时引力透镜观测台</div>
+        <div class="boot-meter" role="progressbar" aria-label="加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="boot-meter">
+          <span id="boot-bar"></span>
+        </div>
+        <div class="boot-status"><span id="boot-status-text">正在校准观测阵列</span><span class="boot-percent" id="boot-percent">00%</span></div>
+      </div>
+      <div class="boot-footer">
+        <span>WEBGL2 / GEODESIC RAY TRACER</span>
+        <span>GARGANTUA 01 · SECTOR 7</span>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/shaders.js"></script>
+  <script src="js/params.js"></script>
+  <script src="js/gl.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

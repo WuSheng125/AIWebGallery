@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="仿《星际穿越》卡冈图雅的克尔黑洞实时光线追踪：引力透镜、吸积盘、多普勒效应，可交互调节参数。">
+  <title>卡冈图雅 · 克尔黑洞实时光线追踪</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="view" aria-label="黑洞实时渲染画面，拖动可环绕观察"></canvas>
+
+  <header class="title" id="title">
+    <h1>卡冈图雅</h1>
+    <p>克尔黑洞的实时光线追踪</p>
+  </header>
+
+  <div class="status" id="status" aria-live="off">
+    <span>帧率<b id="statFps">–</b></span>
+    <span>分辨率<b id="statRes">–</b></span>
+    <span>画面<b id="statState">–</b></span>
+  </div>
+
+  <p class="hint" id="hint">拖动画面环绕黑洞，滚轮缩放，双击复位</p>
+
+  <button class="panel-open" id="panelOpen" type="button">参数</button>
+
+  <aside class="panel" id="panel" aria-label="参数面板">
+    <div class="panel-head">
+      <h2>参数</h2>
+      <div class="actions">
+        <button class="btn-quiet" id="btnShot" type="button" title="保存当前画面 (P)">截图</button>
+        <button class="btn-quiet" id="panelClose" type="button" title="收起面板 (H)">收起</button>
+      </div>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </aside>
+
+  <div class="overlay" id="overlay">
+    <div class="ring"></div>
+    <p id="overlayText">正在编译光线追踪着色器</p>
+  </div>
+
+  <script src="js/blackbody.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/glutil.js"></script>
+  <script src="js/shaders.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

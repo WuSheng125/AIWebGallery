@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a0e">
+  <meta name="description" content="旋转观察卡冈图雅风格的黑洞，自由调整吸积盘、引力透镜与星空。">
+  <title>GARGANTUA · 黑洞观测台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23090b10'/%3E%3Ccircle cx='16' cy='16' r='8' stroke='%23e8bc79' fill='none' stroke-width='2'/%3E%3Cellipse cx='16' cy='17' rx='14' ry='3' stroke='%23e8bc79' fill='none' stroke-width='2'/%3E%3C/svg%3E">
+  <style>
+:root{color-scheme:dark;--bg:#080a0e;--panel:#101217;--line:#25282e;--muted:#808590;--text:#e7e7e9;--gold:#e6b776;--gold-dim:#aa8250;--font:"Segoe UI","Microsoft YaHei",sans-serif;--mono:"Cascadia Code",Consolas,monospace}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px}body{overflow:hidden}button,input,select{font:inherit}button,a,input,select,summary{ -webkit-tap-highlight-color:transparent}button{cursor:pointer}button{color:inherit}a{color:inherit}button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible,canvas:focus-visible{outline:2px solid var(--gold);outline-offset:4px}svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.icon-defs{position:absolute;width:0;height:0;overflow:hidden}.observatory{height:100dvh;display:flex;flex-direction:column}.topbar{height:82px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 30px;gap:30px;background:#0c0e12}.brand{text-decoration:none;display:flex;align-items:center;gap:13px}.brand-icon{width:35px;height:35px;color:var(--gold);stroke-width:1.1}.brand>span{font-family:var(--mono);font-size:17px;letter-spacing:.23em;line-height:1.1}.brand small{display:block;font-family:var(--font);font-size:12px;letter-spacing:.28em;color:var(--muted);margin-top:8px}.top-caption{font-size:13px;color:#646a75;border-left:1px solid #303239;padding-left:26px;letter-spacing:.13em}.top-actions{margin-left:auto;display:flex;align-items:center;gap:23px}.live-label{display:flex;align-items:center;gap:9px;color:#aaaeb8;font-size:12px;letter-spacing:.05em}.live-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 9px #e6b77666}.live-dot.paused{background:#666;box-shadow:none}.icon-button{border:1px solid var(--line);background:transparent;width:34px;height:34px;border-radius:6px;display:grid;place-items:center;color:#a3a7b0;transition:color .2s,border-color .2s}.icon-button:hover{color:var(--gold);border-color:#726047}.workspace{display:flex;flex:1;min-height:0}.viewport{position:relative;flex:1;min-width:0;isolation:isolate;overflow:hidden;background:#020305}canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}canvas.dragging{cursor:grabbing}.scene-heading{position:absolute;top:42px;left:42px;pointer-events:none}.eyebrow{color:var(--gold-dim);font-size:11px;font-family:var(--mono);letter-spacing:.15em;display:flex;align-items:center;gap:10px}.small-line{width:21px;height:1px;background:var(--gold-dim)}h1{font-size:38px;font-weight:400;letter-spacing:.2em;margin:18px 0 12px;line-height:1.3}h1 span{display:block;margin-top:9px;letter-spacing:.3em;font-size:12px;text-transform:uppercase;color:#9b9ca3;font-family:var(--mono)}.scene-heading p{color:#6f727b;font-size:13px;letter-spacing:.09em;margin-top:19px}.scene-corner{position:absolute;top:47px;right:37px;text-align:right;display:flex;flex-direction:column;gap:9px;font-size:12px}.scene-corner span{color:#5d626c}.scene-corner strong{color:#a4a6ad;font-weight:400}.scene-bottom{position:absolute;bottom:29px;left:40px;right:40px;pointer-events:none}.scene-info{display:flex;gap:32px;margin-bottom:23px}.reading{display:flex;flex-direction:column;gap:8px}.reading>span{font-size:11px;letter-spacing:.08em;color:#6d737d}.reading strong{font-weight:400;font-size:16px;letter-spacing:.04em;font-family:var(--mono);color:#b9bdc6}.reading small{font-size:10px;color:#6d737d}.scene-toolbar{display:flex;align-items:center;border:1px solid #2a2c33;background:#0f1116bb;backdrop-filter:blur(12px);border-radius:9px;padding:5px;width:max-content;max-width:100%;pointer-events:auto;box-shadow:0 3px 20px #0004}.tool-button{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:0;border-radius:5px;font-size:12px;color:#aaaeb7;padding:10px 13px;white-space:nowrap;transition:background .2s,color .2s}.tool-button svg{width:17px;height:17px}.tool-button:hover{background:#24262d;color:#eee}.tool-button[aria-pressed=true]{color:var(--gold);background:#e6b77612}.toolbar-separator{height:19px;width:1px;background:#2a2c33;margin:0 3px}.gesture-hint{margin-top:18px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.03em;color:#606671}.gesture-hint svg{width:13px;height:16px}.hint-dot{color:#343a44}.frame-corner{position:absolute;width:13px;height:13px;pointer-events:none;opacity:.45;border-color:#606773;border-style:solid}.tl{left:20px;top:20px;border-width:1px 0 0 1px}.tr{right:20px;top:20px;border-width:1px 1px 0 0}.bl{left:20px;bottom:20px;border-width:0 0 1px 1px}.br{right:20px;bottom:20px;border-width:0 1px 1px 0}.settings{width:326px;flex-shrink:0;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;z-index:3}.panel-heading{padding:29px 25px 22px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line)}.panel-heading>div{flex:1}.panel-heading .eyebrow{font-size:10px;letter-spacing:.16em;color:#737982}h2{font-size:19px;font-weight:500;letter-spacing:.1em;margin:10px 0 0}.panel-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#30343d transparent;padding:0 25px 22px}.section-caption{color:#969ba5;font-size:12px;margin-bottom:13px}.preset-section{padding:23px 0}.presets{display:flex;padding:4px;background:#080a0e;border:1px solid #252830;border-radius:7px;gap:2px}.preset{flex:1;padding:9px 4px;font-size:12px;border:1px solid transparent;border-radius:4px;background:transparent;color:#8a8f99;white-space:nowrap}.preset:hover{color:#d3d5d9}.preset.active{background:#e6b77616;border-color:#e6b77630;color:var(--gold)}.control-section{border-top:1px solid var(--line);padding:21px 0 8px}h3{font-size:14px;font-weight:500;letter-spacing:.03em;margin:0 0 22px;display:flex;align-items:center;gap:10px}.section-index{font-family:var(--mono);color:#686252;font-size:10px}.control{margin-bottom:24px}.control label{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:#acb0b8;margin-bottom:13px;line-height:1.3}.control output{font-family:var(--mono);color:var(--gold);font-size:12px;letter-spacing:.03em}input[type=range]{appearance:none;width:100%;height:3px;border-radius:3px;background:linear-gradient(to right,var(--gold) var(--progress,50%),#30343d var(--progress,50%));cursor:pointer;margin:4px 0;display:block}input[type=range]::-webkit-slider-thumb{appearance:none;background:#e9c186;width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 4px #e6b7760a}input[type=range]::-moz-range-thumb{background:#e9c186;width:11px;height:11px;border-radius:50%;border:0}input[type=range]:focus-visible{outline:2px solid var(--gold);outline-offset:7px}input[type=range].temperature-slider{background:linear-gradient(to right,#b86938,#dbb279,#dadcea,#829ecd)}.range-labels{display:flex;justify-content:space-between;color:#626874;font-size:10px;margin-top:10px}.control-hint{font-size:11px;line-height:1.7;color:#727884;margin:11px 0 0}.advanced summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.advanced summary::-webkit-details-marker{display:none}.advanced summary h3{margin:0}.advanced summary svg{width:14px;height:14px;color:#737884;transition:transform .2s}.advanced[open] summary{margin-bottom:23px}.advanced[open] summary svg{transform:rotate(180deg)}.select-control,.view-control{font-size:13px;color:#acb0b8}.select-control label,.view-control label{display:block;margin-bottom:12px}select{width:100%;font-size:12px;padding:11px 10px;border:1px solid #30333b;border-radius:5px;background:#14171d;color:#b9bdc5;cursor:pointer}.select-control{margin-bottom:20px}.view-control{border-top:1px solid var(--line);padding-top:20px;margin-top:12px}.science-note{display:flex;align-items:flex-start;gap:9px;margin-top:24px}.note-mark{border:1px solid #4b515c;border-radius:50%;width:13px;height:13px;display:grid;place-items:center;font-size:9px;font-family:serif;color:#8c94a1;flex-shrink:0;margin-top:3px}.science-note p{margin:0;color:#717784;font-size:11px;line-height:1.8}.science-note a{display:block;color:#9b876a;text-decoration:none;margin-top:5px}.science-note a:hover{text-decoration:underline}.panel-footer{border-top:1px solid var(--line);padding:16px 25px;display:flex;align-items:center;gap:9px;color:#6f7580;font-size:11px}.panel-footer svg{width:17px;height:17px;color:#8b7454}.footer-coordinate{font-family:var(--mono);margin-left:auto;font-size:10px;color:#5c626c}.statusbar{height:33px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:18px;background:#0c0e12;border-top:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:#5c6370}.statusbar>span:nth-child(2){color:#928371}.status-key{font-family:var(--font);letter-spacing:.03em}.status-key span{margin-left:14px}.render-error{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,420px);padding:30px;background:#171a20;border:1px solid #544733;border-radius:10px}.render-error[hidden]{display:none}.render-error h2{margin-top:0}.render-error p{line-height:1.8;color:#a0a6b1;font-size:14px}.small-button{padding:8px 16px;background:#e6b776;color:#17120b;border:0;border-radius:5px;font-size:14px}.toast{position:fixed;left:50%;bottom:55px;transform:translate(-50%,12px);opacity:0;transition:.2s;background:#202127;border:1px solid #484036;border-radius:7px;padding:12px 20px;font-size:13px;pointer-events:none;z-index:8}.toast.visible{opacity:1;transform:translate(-50%,0)}.mobile-only{display:none}
+@media(min-width:1500px){.settings{width:352px}.scene-heading{top:50px;left:50px}.panel-heading{padding:32px 28px 25px}.panel-scroll{padding:0 28px 26px}.control label{font-size:14px}.control-hint{font-size:12px}.control{margin-bottom:28px}.control-section{padding-top:25px}}
+@media(max-width:1050px){.settings{width:300px}.panel-heading{padding:24px 20px 20px}.panel-scroll{padding-left:20px;padding-right:20px}.scene-heading{top:33px;left:30px}h1{font-size:30px}.scene-bottom{left:30px;right:24px}.scene-corner{right:27px;top:36px}.top-caption{display:none}.topbar{height:72px}.tool-button{padding:10px}.scene-info{gap:24px}}
+@media(max-width:760px){.topbar{height:67px;padding:0 18px;gap:10px}.brand-icon{width:29px;height:29px}.brand>span{font-size:13px;letter-spacing:.18em}.brand small{font-size:10px;margin-top:6px}.top-actions{gap:10px}.live-label{font-size:10px;gap:6px}.mobile-only{display:grid}.settings{position:fixed;right:0;top:67px;bottom:27px;width:min(340px,90vw);transform:translateX(100%);transition:transform .25s;box-shadow:-30px 0 80px #0009}.settings.open{transform:translateX(0)}.panel-heading{padding:23px 20px 19px}.scene-heading{left:25px;top:32px}.scene-heading .eyebrow{font-size:9px}h1{font-size:31px;margin-top:14px}.scene-heading p{font-size:11px}.scene-corner{display:none}.scene-bottom{left:25px;right:20px;bottom:28px}.scene-info{gap:27px;margin-bottom:20px}.reading strong{font-size:14px}.scene-toolbar{padding:4px}.tool-button{font-size:11px;padding:10px;gap:6px}.tool-button svg{width:15px;height:15px}.gesture-hint{font-size:10px;gap:8px}.statusbar{height:27px;padding:0 16px;font-size:8px;letter-spacing:.02em}.status-key{display:none}.statusbar>span:first-child{font-size:7px}.frame-corner{width:10px;height:10px}.tl{top:13px;left:13px}.tr{top:13px;right:13px}.bl{bottom:13px;left:13px}.br{bottom:13px;right:13px}.performance{display:none}}
+@media(max-height:650px) and (min-width:761px){.topbar{height:62px}.scene-heading{top:27px}.scene-heading p{display:none}.panel-heading{padding-top:19px;padding-bottom:17px}.scene-bottom{bottom:23px}.scene-info{margin-bottom:15px}.gesture-hint{margin-top:12px}.panel-footer{padding-top:12px;padding-bottom:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="3.5" transform="rotate(-25 12 12)"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-mouse" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 2v7"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+  </defs></svg>
+  <div class="observatory">
+    <header class="topbar">
+      <a class="brand" href="#universe" aria-label="Gargantua 黑洞观测台"><svg class="brand-icon"><use href="#i-orbit"/></svg><span>GARGANTUA<small>黑洞观测台</small></span></a>
+      <div class="top-caption">越过光的边界</div>
+      <div class="top-actions"><span class="live-label"><span id="liveDot" class="live-dot"></span><span id="liveText">实时模拟</span></span><button id="fullscreen" class="icon-button" title="全屏 (F)" aria-label="全屏"><svg><use href="#i-full"/></svg></button><button id="panelToggle" class="icon-button mobile-only" aria-label="打开参数面板" aria-expanded="false" aria-controls="settings"><svg><use href="#i-sliders"/></svg></button></div>
+    </header>
+    <main class="workspace">
+      <section class="viewport" aria-label="交互式黑洞预览">
+        <canvas id="universe" tabindex="0" aria-label="黑洞预览。拖动旋转，滚轮缩放，方向键旋转，空格暂停，R 重置视角。"></canvas>
+        <div class="scene-heading"><div class="eyebrow"><span class="small-line"></span> DEEP SPACE OBSERVATION</div><h1>卡冈图雅<span>Gargantua</span></h1><p>光线弯折之处，时间失去尺度。</p></div>
+        <div class="scene-corner"><span>观测模式</span><strong id="viewName">电影视角</strong></div>
+        <div id="renderError" class="render-error" role="alert" hidden><h2>无法启动黑洞预览</h2><p id="errorMessage">请使用支持 WebGL 2 的浏览器，并开启硬件加速。</p><button id="retry" class="small-button">重新加载</button></div>
+        <div class="scene-bottom">
+          <div class="scene-info"><div class="reading"><span>观察仰角</span><strong id="angleReading">8.0°</strong></div><div class="reading"><span>镜头距离</span><strong id="distanceReading">18.0 Rₛ</strong></div><div class="reading performance"><span>渲染帧率</span><strong><span id="fps">—</span><small> FPS</small></strong></div></div>
+          <div class="scene-toolbar"><button id="pause" class="tool-button" title="暂停 / 播放 (空格)" aria-pressed="false"><svg><use href="#i-pause"/></svg><span>暂停</span></button><button id="autoOrbit" class="tool-button" aria-pressed="false" title="自动环绕观察"><svg><use href="#i-orbit"/></svg><span>环绕</span></button><button id="resetView" class="tool-button" title="重置视角 (R)"><svg><use href="#i-reset"/></svg><span>复位</span></button><span class="toolbar-separator"></span><button id="snapshot" class="tool-button" title="保存当前黑洞画面"><svg><use href="#i-camera"/></svg><span>截图</span></button></div>
+          <div class="gesture-hint"><svg><use href="#i-mouse"/></svg><span>拖动旋转</span><span class="hint-dot">·</span><span>滚轮缩放</span><span class="hint-dot">·</span><span>双击复位</span></div>
+        </div>
+        <div class="frame-corner tl"></div><div class="frame-corner tr"></div><div class="frame-corner bl"></div><div class="frame-corner br"></div>
+      </section>
+      <aside class="settings" id="settings" aria-label="黑洞参数">
+        <div class="panel-heading"><div><div class="eyebrow">CONTROL ROOM</div><h2>观测参数</h2></div><button id="resetParams" class="icon-button" title="恢复全部默认参数" aria-label="恢复全部默认参数"><svg><use href="#i-reset"/></svg></button><button id="panelClose" class="icon-button mobile-only" aria-label="关闭参数面板"><svg><use href="#i-close"/></svg></button></div>
+        <div class="panel-scroll">
+          <section class="preset-section"><div class="section-caption">快速预设</div><div class="presets" role="group" aria-label="视觉预设"><button class="preset active" data-preset="cinema" aria-pressed="true">星际穿越</button><button class="preset" data-preset="hot" aria-pressed="false">炽热盘面</button><button class="preset" data-preset="quiet" aria-pressed="false">静谧深空</button></div></section>
+          <section class="control-section"><h3><span class="section-index">01</span> 黑洞与空间</h3>
+            <div class="control"><label for="mass">黑洞尺度<output id="massValue">1.00 ×</output></label><input id="mass" type="range" min="0.65" max="1.45" value="1" step="0.01"><div class="range-labels"><span>小</span><span>大</span></div></div>
+            <div class="control"><label for="lensing">透镜强度<output id="lensingValue">1.00</output></label><input id="lensing" type="range" min="0" max="1.5" value="1" step="0.01" aria-describedby="lensingHint"><p class="control-hint" id="lensingHint">光线弯曲，将盘面背侧映射到黑洞上下。</p></div>
+          </section>
+          <section class="control-section"><h3><span class="section-index">02</span> 吸积盘</h3>
+            <div class="control"><label for="diskOuter">外缘半径<output id="diskOuterValue">8.5 Rₛ</output></label><input id="diskOuter" type="range" min="6" max="12" value="8.5" step="0.1"></div>
+            <div class="control"><label for="temperature">盘面色温<output id="temperatureValue">4,800 K</output></label><input id="temperature" class="temperature-slider" type="range" min="2500" max="12000" value="4800" step="100"><div class="range-labels"><span>橙金</span><span>蓝白</span></div></div>
+            <div class="control"><label for="brightness">辐射亮度<output id="brightnessValue">1.20</output></label><input id="brightness" type="range" min="0.3" max="2.8" value="1.2" step="0.05"></div>
+            <div class="control"><label for="doppler">多普勒效应<output id="dopplerValue">0.30</output></label><input id="doppler" type="range" min="0" max="1.5" value="0.3" step="0.01"><p class="control-hint">增强盘面两侧的亮度与颜色差异。</p></div>
+          </section>
+          <details class="control-section advanced"><summary><h3><span class="section-index">03</span> 运动与显示</h3><svg><use href="#i-chevron"/></svg></summary>
+            <div class="control"><label for="thickness">盘面厚度<output id="thicknessValue">0.08 Rₛ</output></label><input id="thickness" type="range" min="0.02" max="0.3" value="0.08" step="0.01"></div>
+            <div class="control"><label for="speed">盘面流速<output id="speedValue">1.00 ×</output></label><input id="speed" type="range" min="0" max="2" value="1" step="0.05"></div>
+            <div class="control"><label for="stars">星空亮度<output id="starsValue">0.80</output></label><input id="stars" type="range" min="0" max="2" value="0.8" step="0.05"></div>
+            <div class="control"><label for="glow">光晕强度<output id="glowValue">0.70</output></label><input id="glow" type="range" min="0" max="1.5" value="0.7" step="0.05"></div>
+            <div class="select-control"><label for="quality">渲染画质</label><select id="quality"><option value="auto">自适应 · 推荐</option><option value="high">高画质</option><option value="medium">均衡</option><option value="low">流畅</option></select><p class="control-hint" id="qualityHint">根据实际帧率自动调整渲染分辨率。</p></div>
+          </details>
+          <div class="view-control"><label for="view">观察视角</label><select id="view"><option value="cinema">电影视角 · 低仰角</option><option value="top">俯视 · 盘面纹理</option><option value="edge">侧视 · 透镜光环</option></select></div>
+          <div class="science-note"><span class="note-mark">i</span><p>电影风格的实时近似。尺度与透镜可独立调整；自旋时空与温度未作完整物理求解。<a href="https://arxiv.org/abs/1502.03808" target="_blank" rel="noopener noreferrer">透镜原理参考</a></p></div>
+        </div>
+        <div class="panel-footer"><svg><use href="#i-orbit"/></svg><span>探索视界之外</span><span class="footer-coordinate">Rₛ = 1</span></div>
+      </aside>
+    </main>
+    <footer class="statusbar"><span>GARGANTUA / INTERACTIVE OBSERVATORY</span><span id="renderStatus">正在初始化光线追踪</span><span class="status-key">SPACE 暂停 <span>R 复位</span></span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module">
+const vertexShader = `#version 300 es
+precision highp float;
+out vec2 vUv;
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  vUv = p;
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+const sceneShader = `#version 300 es
+precision highp float;
+in vec2 vUv;
+out vec4 fragColor;
+uniform vec2 uResolution;
+uniform vec3 uCamera;
+uniform float uTime, uMass, uLensing, uDiskOuter, uTemperature;
+uniform float uBrightness, uDoppler, uThickness, uStars;
+uniform int uSteps;
+uniform sampler2D uSky;
+const float PI = 3.14159265359;
+
+float hash(vec2 p) { return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float noise(vec2 p) {
+  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+}
+vec3 blackbody(float kelvin) {
+  float t=clamp(kelvin,1000.0,40000.0)/100.0;
+  float r=t<=66.0?1.0:1.292936*pow(t-60.0,-0.133205);
+  float g=t<=66.0?0.390082*log(t)-0.631841:1.129891*pow(t-60.0,-0.075515);
+  float b=t>=66.0?1.0:(t<=19.0?0.0:0.543207*log(t-10.0)-1.196254);
+  return pow(clamp(vec3(r,g,b),0.0,1.0),vec3(2.2));
+}
+vec3 acceleration(vec3 p,float h2) {
+  float r2=max(dot(p,p),0.0001);
+  return -1.5*uMass*uLensing*h2*p/(r2*r2*sqrt(r2));
+}
+vec3 diskEmission(vec3 hit,vec3 velocity,float observerF) {
+  float r=length(hit.xz)/uMass;
+  float inner=2.85;
+  float outer=uDiskOuter;
+  float envelope=smoothstep(inner,inner+0.35,r)*(1.0-smoothstep(outer-1.8,outer,r));
+  float angle=atan(hit.z,hit.x);
+  float phase=angle-uTime*1.8/pow(r,1.5);
+  float flow=noise(vec2(r*7.0,phase*4.0));
+  float turbulence=noise(vec2(r*19.0+flow,phase*13.0));
+  float fine=0.5+0.5*sin(r*92.0+flow*5.0+sin(phase*9.0)*0.5);
+  float bands=0.5+0.5*sin(r*25.0+flow*3.5);
+  float filaments=0.16+0.62*fine+0.42*bands+0.24*turbulence;
+  float hotSpots=pow(noise(vec2(r*5.0,phase*8.0)),5.0)*0.6;
+  float profile=pow(3.1/r,1.65)*envelope;
+  float f=max(1.0-1.0/r,0.05);
+  vec3 radial=normalize(hit);
+  vec3 localRay=normalize(velocity+(inversesqrt(f)-1.0)*dot(velocity,radial)*radial);
+  vec3 tangent=normalize(vec3(-hit.z,0.0,hit.x));
+  float beta=sqrt(1.0/(2.0*max(r-1.0,1.0)));
+  float doppler=sqrt(1.0-beta*beta)/(1.0-beta*dot(tangent,-localRay));
+  float shift=clamp(doppler*sqrt(f/observerF),0.4,2.0);
+  float frequency=pow(shift,uDoppler);
+  float temp=uTemperature*pow(3.1/r,0.48)*frequency;
+  vec3 color=blackbody(temp);
+  color=mix(color,vec3(1.0,0.93,0.80),0.18*profile);
+  return color*(filaments+hotSpots)*profile*2.7*uBrightness*pow(frequency,3.0);
+}
+vec3 sky(vec3 direction) {
+  float longitude=atan(direction.z,direction.x)/(2.0*PI)+0.5;
+  float latitude=acos(clamp(direction.y,-1.0,1.0))/PI;
+  vec3 stars=textureLod(uSky,vec2(longitude,latitude),0.0).rgb;
+  float dust=noise(direction.xz*8.0+direction.y*3.0);
+  float band=pow(max(0.0,1.0-abs(direction.y*0.78+direction.x*0.32-0.18)),14.0);
+  vec3 nebula=vec3(0.008,0.012,0.021)*band*(0.25+0.75*dust);
+  return (stars*0.38+nebula)*uStars+vec3(0.0006,0.0009,0.0015);
+}
+vec3 aces(vec3 c) { return clamp((c*(2.51*c+0.03))/(c*(2.43*c+0.59)+0.14),0.0,1.0); }
+void main() {
+  vec2 uv=(vUv-0.5)*vec2(uResolution.x/uResolution.y,1.0);
+  // A centered, fixed-focal-length lens. Zoom changes the observer distance.
+  vec3 forward=normalize(-uCamera);
+  vec3 right=normalize(cross(forward,vec3(0,1,0)));
+  vec3 up=cross(right,forward);
+  vec3 ray=normalize(forward*1.95+right*uv.x*2.0+up*uv.y*2.0);
+  vec3 p=uCamera;
+  float observerF=max(1.0-uMass/length(p),0.05);
+  vec3 er=normalize(p);
+  vec3 v=ray+(sqrt(observerF)-1.0)*dot(ray,er)*er;
+  vec3 angularMomentum=cross(p,v);
+  float h2=dot(angularMomentum,angularMomentum);
+  vec3 light=vec3(0.0);
+  float transmission=1.0;
+  bool captured=false;
+  float minR=1000.0;
+  float escapeRadius=max(length(uCamera)+4.0,25.0*uMass);
+  // Velocity Verlet integrates the Schwarzschild spatial orbit equation.
+  // Lens strength is an artistic modification; 1.0 is the baseline model.
+  for(int i=0;i<288;i++) {
+    if(i>=uSteps) break;
+    float r=length(p);
+    minR=min(minR,r);
+    if(r<1.015*uMass) { captured=true; break; }
+    if(r>escapeRadius && dot(p,v)>0.0) break;
+    float dt=clamp(r*0.065,0.025*uMass,1.35*uMass);
+    vec3 oldP=p, oldV=v;
+    vec3 a=acceleration(p,h2);
+    p+=v*dt+0.5*a*dt*dt;
+    v+=0.5*(a+acceleration(p,h2))*dt;
+    if(oldP.y*p.y<0.0) {
+      float t=oldP.y/(oldP.y-p.y);
+      vec3 hit=mix(oldP,p,t);
+      float diskR=length(hit.xz)/uMass;
+      if(diskR>2.85 && diskR<uDiskOuter) {
+        vec3 emission=diskEmission(hit,mix(oldV,v,t),observerF);
+        float alpha=0.92;
+        light+=transmission*alpha*emission;
+        transmission*=1.0-alpha;
+      }
+    }
+    // Thin emitting atmosphere gives a finite-width disk at edge-on views.
+    vec3 midpoint=(oldP+p)*0.5;
+    float diskR=length(midpoint.xz)/uMass;
+    float height=abs(midpoint.y)/uMass;
+    float thickness=uThickness*(0.6+diskR*0.07);
+    if(diskR>2.9 && diskR<uDiskOuter && height<thickness*4.0) {
+      float density=exp(-height/max(thickness,0.005))*0.17;
+      float envelope=smoothstep(2.85,3.3,diskR)*(1.0-smoothstep(uDiskOuter-1.5,uDiskOuter,diskR));
+      float opacity=1.0-exp(-density*dt/uMass/max(thickness,0.025)*0.55);
+      vec3 color=blackbody(uTemperature*pow(3.1/diskR,0.48));
+      light+=transmission*opacity*color*envelope*pow(3.1/diskR,1.5)*2.8*uBrightness;
+      transmission*=1.0-opacity*0.65;
+    }
+  }
+  // Unresolved critical rays approach the photon sphere. Other rays sample
+  // the sky at their final bent direction, never at the original camera ray.
+  if(!captured && !(minR<2.0*uMass && dot(p,v)<0.0)) light+=transmission*sky(normalize(v));
+  vec3 color=pow(aces(light),vec3(1.0/2.2));
+  fragColor=vec4(color,1.0);
+}`;
+
+const bloomShader = `#version 300 es
+precision highp float;
+in vec2 vUv;
+out vec4 fragColor;
+uniform sampler2D uScene;
+uniform vec2 uTexel;
+vec3 bright(vec2 uv) { vec3 c=texture(uScene,uv).rgb; return c*smoothstep(0.5,1.0,max(c.r,max(c.g,c.b))); }
+void main() {
+  vec3 c=bright(vUv)*0.16;
+  for(int i=0;i<8;i++) {
+    float a=float(i)*0.785398;
+    vec2 d=vec2(cos(a),sin(a));
+    c+=bright(vUv+d*uTexel*4.0)*0.065;
+    c+=bright(vUv+d*uTexel*10.0)*0.04;
+  }
+  fragColor=vec4(c,1.0);
+}`;
+
+const compositeShader = `#version 300 es
+precision highp float;
+in vec2 vUv;
+out vec4 fragColor;
+uniform sampler2D uScene, uBloom;
+uniform vec2 uBloomTexel, uResolution;
+uniform float uGlow;
+void main() {
+  vec3 base=texture(uScene,vUv).rgb;
+  vec3 bloom=texture(uBloom,vUv).rgb*0.28;
+  for(int i=0;i<8;i++) {
+    float a=float(i)*0.785398;
+    vec2 d=vec2(cos(a),sin(a));
+    bloom+=texture(uBloom,vUv+d*uBloomTexel*2.0).rgb*0.065;
+    bloom+=texture(uBloom,vUv+d*uBloomTexel*7.0).rgb*0.025;
+  }
+  vec3 color=1.0-(1.0-base)*exp(-bloom*uGlow*0.75);
+  vec2 q=vUv-0.5;
+  float vignette=1.0-0.26*smoothstep(0.15,0.8,length(q));
+  color*=vignette;
+  // A very faint film grain avoids banding in the otherwise dark background.
+  float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-0.5;
+  color+=grain/255.0;
+  fragColor=vec4(clamp(color,0.0,1.0),1.0);
+}`;
+
+
+const QUALITY = { high: {scale:1.15, steps:256}, medium:{scale:0.85,steps:208}, low:{scale:0.55,steps:168} };
+
+class BlackHoleRenderer {
+  constructor(canvas, params) {
+    this.canvas=canvas;
+    this.params=params;
+    this.gl=canvas.getContext('webgl2',{alpha:false,antialias:false,depth:false,stencil:false,powerPreference:'high-performance',preserveDrawingBuffer:false});
+    if(!this.gl) throw new Error('当前浏览器无法使用 WebGL 2。请开启硬件加速，或使用最新版 Edge / Chrome / Firefox。');
+    this.scale=0.85;
+    this.steps=208;
+    this.quality='auto';
+    this.camera={azimuth:0.22,elevation:8*Math.PI/180,distance:18};
+    this.targetCamera={...this.camera};
+    this.programs={scene:this.createProgram(sceneShader),bloom:this.createProgram(bloomShader),composite:this.createProgram(compositeShader)};
+    this.sky=this.createSkyTexture();
+    this.scene=this.createTarget();
+    this.bloom=this.createTarget();
+    this.width=0; this.height=0;
+    this.lost=false;
+    this.gpuSamples=[];
+    this.timer=this.gl.getExtension('EXT_disjoint_timer_query_webgl2');
+    this.pendingQueries=[];
+    this.gpuMs=0;
+    this.lastAdaptive=0;
+    this.resizeObserver=new ResizeObserver(()=>{if(this.resize())this.onResize?.();});
+    this.resizeObserver.observe(canvas);
+    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();this.lost=true;this.onError?.('图形上下文已中断。请重新加载以恢复预览。');});
+    canvas.addEventListener('webglcontextrestored',()=>location.reload());
+    this.resize();
+  }
+  createProgram(fragment) {
+    const gl=this.gl;
+    const compile=(type,source)=>{
+      const shader=gl.createShader(type);gl.shaderSource(shader,source);gl.compileShader(shader);
+      if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)){const info=gl.getShaderInfoLog(shader);gl.deleteShader(shader);throw new Error(`着色器编译失败：${info}`);}
+      return shader;
+    };
+    const vertex=compile(gl.VERTEX_SHADER,vertexShader), frag=compile(gl.FRAGMENT_SHADER,fragment);
+    const program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,frag);gl.linkProgram(program);
+    gl.deleteShader(vertex);gl.deleteShader(frag);
+    if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(`图形程序链接失败：${gl.getProgramInfoLog(program)}`);
+    const uniforms={};
+    const count=gl.getProgramParameter(program,gl.ACTIVE_UNIFORMS);
+    for(let i=0;i<count;i++){const info=gl.getActiveUniform(program,i);uniforms[info.name]=gl.getUniformLocation(program,info.name);}
+    return {program,uniforms};
+  }
+  createTarget() {
+    const gl=this.gl;
+    const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    const framebuffer=gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER,framebuffer);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texture,0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    return {texture,framebuffer,width:0,height:0};
+  }
+  sizeTarget(target,width,height) {
+    if(target.width===width && target.height===height)return;
+    const gl=this.gl;target.width=width;target.height=height;
+    gl.bindTexture(gl.TEXTURE_2D,target.texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,width,height,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,target.framebuffer);
+    if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw new Error('无法创建渲染缓冲区。请切换到流畅画质。');
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  }
+  createSkyTexture() {
+    const sky=document.createElement('canvas');sky.width=2048;sky.height=1024;
+    const ctx=sky.getContext('2d');ctx.fillStyle='#010205';ctx.fillRect(0,0,sky.width,sky.height);
+    let seed=52841;
+    const random=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;};
+    for(let i=0;i<5000;i++){
+      const x=random()*sky.width, y=Math.acos(random()*2-1)/Math.PI*sky.height;
+      const bright=random(), radius=bright>0.988?1.3:bright>0.94?0.8:0.3+random()*0.35;
+      const c=random(), rgb=c<0.15?'159,187,230':c>0.85?'232,202,160':'215,219,229';
+      const alpha=0.22+bright*0.65;
+      if(bright>0.975){const glow=ctx.createRadialGradient(x,y,0,x,y,radius*5);glow.addColorStop(0,`rgba(${rgb},${alpha*0.4})`);glow.addColorStop(1,`rgba(${rgb},0)`);ctx.fillStyle=glow;ctx.fillRect(x-radius*5,y-radius*5,radius*10,radius*10);}
+      ctx.fillStyle=`rgba(${rgb},${alpha})`;ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+    }
+    const gl=this.gl,texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,sky);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.generateMipmap(gl.TEXTURE_2D);
+    return texture;
+  }
+  setQuality(quality) {
+    this.quality=quality;
+    const settings=QUALITY[quality] || QUALITY.medium;
+    this.scale=settings.scale;this.steps=settings.steps;
+    this.pendingQueries.forEach(query=>this.gl.deleteQuery(query));this.pendingQueries=[];this.gpuSamples=[];
+    this.resize();
+  }
+  resize() {
+    if(this.lost)return;
+    const rect=this.canvas.getBoundingClientRect();
+    if(!rect.width || !rect.height)return;
+    const dpr=Math.min(window.devicePixelRatio||1,1.5);
+    const displayWidth=Math.round(rect.width*dpr),displayHeight=Math.round(rect.height*dpr);
+    const displayChanged=this.canvas.width!==displayWidth||this.canvas.height!==displayHeight;
+    if(this.canvas.width!==displayWidth)this.canvas.width=displayWidth;
+    if(this.canvas.height!==displayHeight)this.canvas.height=displayHeight;
+    // The costly orbit integration is resolution-limited independently of DPR.
+    const maxPixels=1500000;
+    let scale=this.scale;
+    if(rect.width*rect.height*scale*scale>maxPixels)scale=Math.sqrt(maxPixels/(rect.width*rect.height));
+    const width=Math.max(1,Math.round(rect.width*scale)),height=Math.max(1,Math.round(rect.height*scale));
+    const changed=displayChanged||this.width!==width||this.height!==height;
+    this.width=width;this.height=height;
+    this.sizeTarget(this.scene,this.width,this.height);
+    this.sizeTarget(this.bloom,Math.max(1,Math.round(this.width/4)),Math.max(1,Math.round(this.height/4)));
+    return changed;
+  }
+  bindTexture(texture,unit,uniform) {const gl=this.gl;gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,texture);gl.uniform1i(uniform,unit);}
+  draw(time) {
+    if(this.lost || !this.width)return;
+    const gl=this.gl, p=this.params;
+    for(const key of ['azimuth','elevation','distance'])this.camera[key]+=(this.targetCamera[key]-this.camera[key])*0.16;
+    const c=this.camera;
+    const camera=[Math.sin(c.azimuth)*Math.cos(c.elevation)*c.distance,Math.sin(c.elevation)*c.distance,Math.cos(c.azimuth)*Math.cos(c.elevation)*c.distance];
+    let query;
+    if(this.timer && this.quality==='auto' && this.pendingQueries.length<4 && Math.random()<0.12){query=gl.createQuery();gl.beginQuery(this.timer.TIME_ELAPSED_EXT,query);}
+    gl.bindFramebuffer(gl.FRAMEBUFFER,this.scene.framebuffer);gl.viewport(0,0,this.width,this.height);
+    const scene=this.programs.scene;gl.useProgram(scene.program);const s=scene.uniforms;
+    gl.uniform2f(s.uResolution,this.width,this.height);gl.uniform3fv(s.uCamera,camera);
+    gl.uniform1f(s.uTime,time);gl.uniform1f(s.uMass,p.mass);gl.uniform1f(s.uLensing,p.lensing);gl.uniform1f(s.uDiskOuter,p.diskOuter);gl.uniform1f(s.uTemperature,p.temperature);
+    gl.uniform1f(s.uBrightness,p.brightness);gl.uniform1f(s.uDoppler,p.doppler);gl.uniform1f(s.uThickness,p.thickness);gl.uniform1f(s.uStars,p.stars);gl.uniform1i(s.uSteps,this.steps);this.bindTexture(this.sky,0,s.uSky);gl.drawArrays(gl.TRIANGLES,0,3);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,this.bloom.framebuffer);gl.viewport(0,0,this.bloom.width,this.bloom.height);
+    const bloom=this.programs.bloom;gl.useProgram(bloom.program);gl.uniform2f(bloom.uniforms.uTexel,1/this.width,1/this.height);this.bindTexture(this.scene.texture,0,bloom.uniforms.uScene);gl.drawArrays(gl.TRIANGLES,0,3);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,this.canvas.width,this.canvas.height);
+    const composite=this.programs.composite;gl.useProgram(composite.program);const co=composite.uniforms;
+    gl.uniform2f(co.uBloomTexel,1/this.bloom.width,1/this.bloom.height);gl.uniform2f(co.uResolution,this.canvas.width,this.canvas.height);gl.uniform1f(co.uGlow,p.glow);this.bindTexture(this.scene.texture,0,co.uScene);this.bindTexture(this.bloom.texture,1,co.uBloom);gl.drawArrays(gl.TRIANGLES,0,3);
+    if(query){gl.endQuery(this.timer.TIME_ELAPSED_EXT);this.pendingQueries.push(query);}
+    if(this.timer && this.pendingQueries.length){
+      const oldest=this.pendingQueries[0];
+      if(gl.getQueryParameter(oldest,gl.QUERY_RESULT_AVAILABLE)){
+        if(!gl.getParameter(this.timer.GPU_DISJOINT_EXT)){this.gpuMs=gl.getQueryParameter(oldest,gl.QUERY_RESULT)/1e6;this.gpuSamples.push(this.gpuMs);if(this.gpuSamples.length>20)this.gpuSamples.shift();}
+        gl.deleteQuery(oldest);this.pendingQueries.shift();
+      }
+    }
+  }
+  adapt(frameMs,now) {
+    if(this.quality!=='auto' || now-this.lastAdaptive<3500)return;
+    const measured=this.gpuSamples.length>5?this.gpuSamples.reduce((a,b)=>a+b,0)/this.gpuSamples.length:frameMs;
+    const old=this.scale;
+    if(measured>26)this.scale=Math.max(0.4,this.scale*0.82);
+    else if(measured<12)this.scale=Math.min(1.05,this.scale*1.08);
+    this.lastAdaptive=now;
+    if(Math.abs(old-this.scale)>0.005){this.steps=this.scale<0.6?168:208;this.resize();this.gpuSamples=[];}
+  }
+  resetView(view='cinema',immediate=false) {
+    const elevation={cinema:8,top:70,edge:0.7}[view]??8;
+    this.targetCamera={azimuth:0.22,elevation:elevation*Math.PI/180,distance:view==='top'?20:18};
+    if(immediate)this.camera={...this.targetCamera};
+  }
+  snapshot(time) {
+    this.draw(time);
+    return new Promise((resolve,reject)=>this.canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('截图保存失败')),'image/png'));
+  }
+  dispose() {
+    this.resizeObserver.disconnect();
+    const gl=this.gl;
+    Object.values(this.programs).forEach(p=>gl.deleteProgram(p.program));
+    [this.scene,this.bloom].forEach(target=>{gl.deleteTexture(target.texture);gl.deleteFramebuffer(target.framebuffer);});
+    gl.deleteTexture(this.sky);this.pendingQueries.forEach(query=>gl.deleteQuery(query));
+  }
+}
+
+
+const defaults={mass:1,lensing:1,diskOuter:8.5,temperature:4800,brightness:1.2,doppler:0.3,thickness:0.08,speed:1,stars:0.8,glow:0.7};
+const presets={
+  cinema:{...defaults},
+  hot:{...defaults,temperature:10000,brightness:1.75,doppler:0.8,diskOuter:9.8,thickness:0.12,speed:1.4,glow:0.9},
+  quiet:{...defaults,temperature:3300,brightness:0.65,doppler:0.15,diskOuter:7.3,speed:0.45,stars:1.3,glow:0.4}
+};
+const params={...defaults};
+const $=id=>document.getElementById(id);
+const canvas=$('universe');
+let renderer,paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,autoOrbit=false;
+let time=0,lastTime=0,frameCount=0,fpsStart=0,frameTimes=[],toastTimer;
+let dirty=true,rafId=0;
+const pressed=new Map();
+let pinchDistance=0;
+
+function showToast(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),2600);}
+function error(message){$('renderError').hidden=false;$('errorMessage').textContent=message;$('renderStatus').textContent='渲染不可用';$('fps').textContent='—';}
+function format(key,value){
+  if(key==='temperature')return `${Math.round(value).toLocaleString('zh-CN')} K`;
+  if(key==='diskOuter')return `${value.toFixed(1)} Rₛ`;
+  if(key==='thickness')return `${value.toFixed(2)} Rₛ`;
+  if(key==='mass'||key==='speed')return `${value.toFixed(2)} ×`;
+  return value.toFixed(2);
+}
+function updateControls(){for(const [key,value] of Object.entries(params)){
+  const input=$(key);input.value=value;input.style.setProperty('--progress',`${(value-Number(input.min))/(Number(input.max)-Number(input.min))*100}%`);$(key+'Value').textContent=format(key,value);
+}}
+function selectPreset(name){
+  document.querySelectorAll('.preset').forEach(button=>{const selected=button.dataset.preset===name;button.classList.toggle('active',selected);button.setAttribute('aria-pressed',String(selected));});
+}
+for(const key of Object.keys(params))$(key).addEventListener('input',event=>{
+  params[key]=Number(event.target.value);updateControls();selectPreset(null);dirty=true;wake();
+});
+document.querySelectorAll('.preset').forEach(button=>button.addEventListener('click',()=>{
+  Object.assign(params,presets[button.dataset.preset]);updateControls();selectPreset(button.dataset.preset);renderer?.resetView();$('view').value='cinema';$('viewName').textContent='电影视角';dirty=true;wake();
+}));
+function pauseUI(){
+  $('pause').setAttribute('aria-pressed',String(paused));$('pause').querySelector('use').setAttribute('href',paused?'#i-play':'#i-pause');$('pause').querySelector('span').textContent=paused?'播放':'暂停';$('liveText').textContent=paused?'模拟已暂停':'实时模拟';$('liveDot').classList.toggle('paused',paused);
+}
+function togglePause(){paused=!paused;pauseUI();dirty=true;wake();}
+$('pause').addEventListener('click',togglePause);
+$('autoOrbit').addEventListener('click',()=>{autoOrbit=!autoOrbit;$('autoOrbit').setAttribute('aria-pressed',String(autoOrbit));dirty=true;wake();});
+function resetView(){renderer?.resetView();$('view').value='cinema';$('viewName').textContent='电影视角';dirty=true;wake();}
+$('resetView').addEventListener('click',resetView);
+$('resetParams').addEventListener('click',()=>{Object.assign(params,defaults);$('quality').value='auto';renderer?.setQuality('auto');updateControls();selectPreset('cinema');autoOrbit=false;$('autoOrbit').setAttribute('aria-pressed','false');resetView();showToast('已恢复默认观测参数');});
+$('view').addEventListener('change',()=>{renderer?.resetView($('view').value);$('viewName').textContent={cinema:'电影视角',top:'俯视盘面',edge:'侧视光环'}[$('view').value];dirty=true;wake();});
+$('quality').addEventListener('change',()=>{renderer?.setQuality($('quality').value);dirty=true;wake();});
+const mobileLayout=window.matchMedia('(max-width:760px)');
+function syncPanelAccessibility(){const closed=mobileLayout.matches&&!$('settings').classList.contains('open');$('settings').inert=closed;$('settings').setAttribute('aria-hidden',String(closed));}
+mobileLayout.addEventListener('change',syncPanelAccessibility);
+function setPanel(open){
+  const hadPanelFocus=$('settings').contains(document.activeElement);
+  $('settings').classList.toggle('open',open);$('panelToggle').setAttribute('aria-expanded',String(open));$('panelToggle').setAttribute('aria-label',open?'关闭参数面板':'打开参数面板');syncPanelAccessibility();
+  if(mobileLayout.matches){if(open)$('panelClose').focus();else if(hadPanelFocus)$('panelToggle').focus();}
+}
+syncPanelAccessibility();
+$('panelToggle').addEventListener('click',()=>setPanel(!$('settings').classList.contains('open')));
+$('panelClose').addEventListener('click',()=>{setPanel(false);$('panelToggle').focus();});
+$('retry').addEventListener('click',()=>location.reload());
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{showToast('当前窗口不支持全屏，可使用浏览器全屏功能');}}
+$('fullscreen').addEventListener('click',fullscreen);
+document.addEventListener('fullscreenchange',()=>{$('fullscreen').setAttribute('aria-label',document.fullscreenElement?'退出全屏':'全屏');renderer?.resize();dirty=true;wake();});
+$('snapshot').addEventListener('click',async()=>{
+  if(!renderer || renderer.lost)return;
+  try{const blob=await renderer.snapshot(time);const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`gargantua-${new Date().toISOString().replace(/[:.]/g,'-')}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);showToast('当前黑洞画面已保存');}catch{showToast('截图未能保存，请稍后重试');}
+});
+function rotate(dx,dy){if(!renderer)return;renderer.targetCamera.azimuth-=dx*0.004;renderer.targetCamera.elevation=Math.max(-1.45,Math.min(1.45,renderer.targetCamera.elevation+dy*0.003));$('viewName').textContent='自由观察';dirty=true;wake();}
+function zoom(factor){if(!renderer)return;renderer.targetCamera.distance=Math.max(12,Math.min(42,renderer.targetCamera.distance*factor));dirty=true;wake();}
+function pinch(){const points=[...pressed.values()];return points.length>=2?Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y):0;}
+canvas.addEventListener('pointerdown',event=>{if(event.pointerType==='mouse'&&event.button!==0)return;canvas.focus({preventScroll:true});canvas.setPointerCapture(event.pointerId);pressed.set(event.pointerId,{x:event.clientX,y:event.clientY});pinchDistance=pinch();canvas.classList.add('dragging');});
+canvas.addEventListener('pointermove',event=>{
+  const old=pressed.get(event.pointerId);if(!old)return;
+  pressed.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  if(pressed.size===1)rotate(event.clientX-old.x,event.clientY-old.y);
+  else {const next=pinch();if(pinchDistance>0&&next>0)zoom(pinchDistance/next);pinchDistance=next;}
+});
+function release(event){pressed.delete(event.pointerId);pinchDistance=pinch();if(!pressed.size)canvas.classList.remove('dragging');}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+canvas.addEventListener('wheel',event=>{event.preventDefault();zoom(Math.exp(Math.max(-120,Math.min(120,event.deltaY))*0.0015));},{passive:false});
+canvas.addEventListener('dblclick',resetView);
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){setPanel(false);return;}
+  const active=document.activeElement;
+  if(active&&active!==canvas&&active!==document.body&&(active.matches('input,select,textarea,button,summary,a')||active.isContentEditable))return;
+  if(event.altKey||event.ctrlKey||event.metaKey)return;
+  const k=event.key.toLowerCase();
+  if(k===' '){event.preventDefault();togglePause();}
+  else if(k==='r')resetView();else if(k==='f')fullscreen();
+  else if(k.startsWith('arrow')){event.preventDefault();rotate(k==='arrowleft'?-18:k==='arrowright'?18:0,k==='arrowup'?-18:k==='arrowdown'?18:0);}
+  else if(k==='+'||k==='=')zoom(0.94);else if(k==='-')zoom(1.06);
+});
+function wake(){if(!rafId&&!document.hidden&&renderer&&!renderer.lost){lastTime=performance.now();fpsStart=lastTime;frameCount=0;rafId=requestAnimationFrame(frame);}}
+function frame(now){
+  rafId=0;
+  if(document.hidden||!renderer||renderer.lost)return;
+  const delta=Math.min(0.1,(now-lastTime)/1000);lastTime=now;
+  if(!paused)time+=delta*params.speed;
+  if(autoOrbit&&!paused)renderer.targetCamera.azimuth+=delta*0.055;
+  const moving=Object.keys(renderer.camera).some(key=>Math.abs(renderer.camera[key]-renderer.targetCamera[key])>0.0001);
+  if(!paused||dirty||moving){try{renderer.draw(time);}catch(e){error(e.message);return;}dirty=false;}
+  frameCount++;frameTimes.push(delta*1000);if(frameTimes.length>90)frameTimes.shift();
+  $('angleReading').textContent=`${(renderer.camera.elevation*180/Math.PI).toFixed(1)}°`;
+  $('distanceReading').textContent=`${renderer.camera.distance.toFixed(1)} Rₛ`;
+  if(now-fpsStart>1000){
+    const fps=Math.round(frameCount*1000/(now-fpsStart));$('fps').textContent=String(fps);frameCount=0;fpsStart=now;
+    if(!paused)renderer.adapt(frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,now);
+    const q=$('quality').selectedOptions[0].textContent.split(' · ')[0];
+    $('renderStatus').textContent=`WEBGL 2 / ${renderer.width} × ${renderer.height} / ${q}`;
+    $('qualityHint').textContent=renderer.quality==='auto'?`当前渲染 ${renderer.width} × ${renderer.height}，自动平衡清晰度与帧率。`:`当前渲染 ${renderer.width} × ${renderer.height}。`;
+  }
+  if(!paused||moving)rafId=requestAnimationFrame(frame);
+  else {$('fps').textContent='—';$('renderStatus').textContent=`WEBGL 2 / ${renderer.width} × ${renderer.height} / 已暂停`;}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId);rafId=0;}else{dirty=true;wake();}});
+window.addEventListener('resize',()=>{dirty=true;renderer?.resize();wake();});
+updateControls();pauseUI();
+try{
+  renderer=new BlackHoleRenderer(canvas,params);renderer.onError=error;renderer.onResize=()=>{dirty=true;wake();};
+  renderer.draw(0);
+  $('renderStatus').textContent=`WEBGL 2 / ${renderer.width} × ${renderer.height} / 自适应`;
+  wake();
+}catch(e){error(e.message);}
+// Feature-detected browser WebMCP tools expose only the requested view controls.
+const modelContext=document.modelContext??navigator.modelContext;
+if(modelContext?.registerTool){
+  const lifecycle=new AbortController();
+  window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});
+  try{void Promise.resolve(modelContext.registerTool({name:'set_black_hole_parameters',title:'调整黑洞观测参数',description:'调整黑洞观测参数并返回实际值。',annotations:{readOnlyHint:false,untrustedContentHint:false},inputSchema:{type:'object',properties:Object.fromEntries(Object.keys(params).map(key=>[key,{type:'number',minimum:Number($(key).min),maximum:Number($(key).max)}])),additionalProperties:false},execute:async values=>{
+    if(!values||typeof values!=='object'||Array.isArray(values))throw new Error('无效参数');
+    for(const[key,value]of Object.entries(values)){if(!(key in params)||!Number.isFinite(value)||value<Number($(key).min)||value>Number($(key).max))throw new Error('无效参数');}
+    Object.assign(params,values);updateControls();selectPreset(null);dirty=true;wake();return{content:[{type:'text',text:JSON.stringify(params)}]};
+  }},{signal:lifecycle.signal})).catch(()=>{});}catch{/* The optional API never blocks the observatory. */}
+}
+
+</script>
+</body>
+</html>

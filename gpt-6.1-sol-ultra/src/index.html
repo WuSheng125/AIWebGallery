@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a0e">
+  <meta name="description" content="旋转观察卡冈图雅风格的黑洞，自由调整吸积盘、引力透镜与星空。">
+  <title>GARGANTUA · 黑洞观测台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23090b10'/%3E%3Ccircle cx='16' cy='16' r='8' stroke='%23e8bc79' fill='none' stroke-width='2'/%3E%3Cellipse cx='16' cy='17' rx='14' ry='3' stroke='%23e8bc79' fill='none' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="3.5" transform="rotate(-25 12 12)"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-mouse" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 2v7"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+  </defs></svg>
+  <div class="observatory">
+    <header class="topbar">
+      <a class="brand" href="#universe" aria-label="Gargantua 黑洞观测台"><svg class="brand-icon"><use href="#i-orbit"/></svg><span>GARGANTUA<small>黑洞观测台</small></span></a>
+      <div class="top-caption">越过光的边界</div>
+      <div class="top-actions"><span class="live-label"><span id="liveDot" class="live-dot"></span><span id="liveText">实时模拟</span></span><button id="fullscreen" class="icon-button" title="全屏 (F)" aria-label="全屏"><svg><use href="#i-full"/></svg></button><button id="panelToggle" class="icon-button mobile-only" aria-label="打开参数面板" aria-expanded="false" aria-controls="settings"><svg><use href="#i-sliders"/></svg></button></div>
+    </header>
+    <main class="workspace">
+      <section class="viewport" aria-label="交互式黑洞预览">
+        <canvas id="universe" tabindex="0" aria-label="黑洞预览。拖动旋转，滚轮缩放，方向键旋转，空格暂停，R 重置视角。"></canvas>
+        <div class="scene-heading"><div class="eyebrow"><span class="small-line"></span> DEEP SPACE OBSERVATION</div><h1>卡冈图雅<span>Gargantua</span></h1><p>光线弯折之处，时间失去尺度。</p></div>
+        <div class="scene-corner"><span>观测模式</span><strong id="viewName">电影视角</strong></div>
+        <div id="renderError" class="render-error" role="alert" hidden><h2>无法启动黑洞预览</h2><p id="errorMessage">请使用支持 WebGL 2 的浏览器，并开启硬件加速。</p><button id="retry" class="small-button">重新加载</button></div>
+        <div class="scene-bottom">
+          <div class="scene-info"><div class="reading"><span>观察仰角</span><strong id="angleReading">8.0°</strong></div><div class="reading"><span>镜头距离</span><strong id="distanceReading">18.0 Rₛ</strong></div><div class="reading performance"><span>渲染帧率</span><strong><span id="fps">—</span><small> FPS</small></strong></div></div>
+          <div class="scene-toolbar"><button id="pause" class="tool-button" title="暂停 / 播放 (空格)" aria-pressed="false"><svg><use href="#i-pause"/></svg><span>暂停</span></button><button id="autoOrbit" class="tool-button" aria-pressed="false" title="自动环绕观察"><svg><use href="#i-orbit"/></svg><span>环绕</span></button><button id="resetView" class="tool-button" title="重置视角 (R)"><svg><use href="#i-reset"/></svg><span>复位</span></button><span class="toolbar-separator"></span><button id="snapshot" class="tool-button" title="保存当前黑洞画面"><svg><use href="#i-camera"/></svg><span>截图</span></button></div>
+          <div class="gesture-hint"><svg><use href="#i-mouse"/></svg><span>拖动旋转</span><span class="hint-dot">·</span><span>滚轮缩放</span><span class="hint-dot">·</span><span>双击复位</span></div>
+        </div>
+        <div class="frame-corner tl"></div><div class="frame-corner tr"></div><div class="frame-corner bl"></div><div class="frame-corner br"></div>
+      </section>
+      <aside class="settings" id="settings" aria-label="黑洞参数">
+        <div class="panel-heading"><div><div class="eyebrow">CONTROL ROOM</div><h2>观测参数</h2></div><button id="resetParams" class="icon-button" title="恢复全部默认参数" aria-label="恢复全部默认参数"><svg><use href="#i-reset"/></svg></button><button id="panelClose" class="icon-button mobile-only" aria-label="关闭参数面板"><svg><use href="#i-close"/></svg></button></div>
+        <div class="panel-scroll">
+          <section class="preset-section"><div class="section-caption">快速预设</div><div class="presets" role="group" aria-label="视觉预设"><button class="preset active" data-preset="cinema" aria-pressed="true">星际穿越</button><button class="preset" data-preset="hot" aria-pressed="false">炽热盘面</button><button class="preset" data-preset="quiet" aria-pressed="false">静谧深空</button></div></section>
+          <section class="control-section"><h3><span class="section-index">01</span> 黑洞与空间</h3>
+            <div class="control"><label for="mass">黑洞尺度<output id="massValue">1.00 ×</output></label><input id="mass" type="range" min="0.65" max="1.45" value="1" step="0.01"><div class="range-labels"><span>小</span><span>大</span></div></div>
+            <div class="control"><label for="lensing">透镜强度<output id="lensingValue">1.00</output></label><input id="lensing" type="range" min="0" max="1.5" value="1" step="0.01" aria-describedby="lensingHint"><p class="control-hint" id="lensingHint">光线弯曲，将盘面背侧映射到黑洞上下。</p></div>
+          </section>
+          <section class="control-section"><h3><span class="section-index">02</span> 吸积盘</h3>
+            <div class="control"><label for="diskOuter">外缘半径<output id="diskOuterValue">8.5 Rₛ</output></label><input id="diskOuter" type="range" min="6" max="12" value="8.5" step="0.1"></div>
+            <div class="control"><label for="temperature">盘面色温<output id="temperatureValue">4,800 K</output></label><input id="temperature" class="temperature-slider" type="range" min="2500" max="12000" value="4800" step="100"><div class="range-labels"><span>橙金</span><span>蓝白</span></div></div>
+            <div class="control"><label for="brightness">辐射亮度<output id="brightnessValue">1.20</output></label><input id="brightness" type="range" min="0.3" max="2.8" value="1.2" step="0.05"></div>
+            <div class="control"><label for="doppler">多普勒效应<output id="dopplerValue">0.30</output></label><input id="doppler" type="range" min="0" max="1.5" value="0.3" step="0.01"><p class="control-hint">增强盘面两侧的亮度与颜色差异。</p></div>
+          </section>
+          <details class="control-section advanced"><summary><h3><span class="section-index">03</span> 运动与显示</h3><svg><use href="#i-chevron"/></svg></summary>
+            <div class="control"><label for="thickness">盘面厚度<output id="thicknessValue">0.08 Rₛ</output></label><input id="thickness" type="range" min="0.02" max="0.3" value="0.08" step="0.01"></div>
+            <div class="control"><label for="speed">盘面流速<output id="speedValue">1.00 ×</output></label><input id="speed" type="range" min="0" max="2" value="1" step="0.05"></div>
+            <div class="control"><label for="stars">星空亮度<output id="starsValue">0.80</output></label><input id="stars" type="range" min="0" max="2" value="0.8" step="0.05"></div>
+            <div class="control"><label for="glow">光晕强度<output id="glowValue">0.70</output></label><input id="glow" type="range" min="0" max="1.5" value="0.7" step="0.05"></div>
+            <div class="select-control"><label for="quality">渲染画质</label><select id="quality"><option value="auto">自适应 · 推荐</option><option value="high">高画质</option><option value="medium">均衡</option><option value="low">流畅</option></select><p class="control-hint" id="qualityHint">根据实际帧率自动调整渲染分辨率。</p></div>
+          </details>
+          <div class="view-control"><label for="view">观察视角</label><select id="view"><option value="cinema">电影视角 · 低仰角</option><option value="top">俯视 · 盘面纹理</option><option value="edge">侧视 · 透镜光环</option></select></div>
+          <div class="science-note"><span class="note-mark">i</span><p>电影风格的实时近似。尺度与透镜可独立调整；自旋时空与温度未作完整物理求解。<a href="https://arxiv.org/abs/1502.03808" target="_blank" rel="noopener noreferrer">透镜原理参考</a></p></div>
+        </div>
+        <div class="panel-footer"><svg><use href="#i-orbit"/></svg><span>探索视界之外</span><span class="footer-coordinate">Rₛ = 1</span></div>
+      </aside>
+    </main>
+    <footer class="statusbar"><span>GARGANTUA / INTERACTIVE OBSERVATORY</span><span id="renderStatus">正在初始化光线追踪</span><span class="status-key">SPACE 暂停 <span>R 复位</span></span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
