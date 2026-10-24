@@ -3,9 +3,14 @@
     "id": "claude-opus-5.5-medium",
     "model": "Claude Opus 5.5",
     "effort": "Medium",
-    "title": "卡冈图雅 · 克尔黑洞",
-    "description": "以光线追踪画面为中心，搭配可收起的参数面板与观测数据。",
-    "stack": ["JavaScript", "WebGL 2"],
+    "durationSeconds": 2497,
+    "cost": "未记录",
+    "harness": "Claude Desktop",
+    "testDate": "2026/10/17",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
     "entry": "demos/claude-opus-5.5-medium/index.html",
     "preview": "previews/claude-opus-5.5-medium.jpg"
   },
@@ -13,9 +18,14 @@
     "id": "deepseek-v41-flash-1017-high",
     "model": "DeepSeek V41 Flash 1017",
     "effort": "High",
-    "title": "Gargantua · 观测站",
-    "description": "暖金色黑洞画面，观测预设与参数集中在右侧控制台。",
-    "stack": ["JavaScript", "WebGL 2"],
+    "durationSeconds": 3436,
+    "cost": "2.59 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/17",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
     "entry": "demos/deepseek-v41-flash-1017-high/index.html",
     "preview": "previews/deepseek-v41-flash-1017-high.jpg"
   },
@@ -23,9 +33,14 @@
     "id": "deepseek-v41-flash-1017-max",
     "model": "DeepSeek V41 Flash 1017",
     "effort": "Max",
-    "title": "Gargantua · 黑洞观测台",
-    "description": "独立的黑洞渲染版本，提供相机、吸积盘与透镜参数控制。",
-    "stack": ["JavaScript", "WebGL 2"],
+    "durationSeconds": 3494,
+    "cost": "2.07 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/18",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
     "entry": "demos/deepseek-v41-flash-1017-max/index.html",
     "preview": "previews/deepseek-v41-flash-1017-max.jpg"
   },
@@ -33,9 +48,14 @@
     "id": "gemini-4-argon-high",
     "model": "Gemini 4 Argon",
     "effort": "High",
-    "title": "Gargantua · 深空观测台",
-    "description": "将天体遥测、视角切换和多种预设组织成完整的观测界面。",
-    "stack": ["Three.js", "GLSL"],
+    "durationSeconds": 2407,
+    "cost": "4.22 USD",
+    "harness": "DSH",
+    "testDate": "2026/10/17",
+    "stack": [
+      "Three.js",
+      "GLSL"
+    ],
     "entry": "demos/gemini-4-argon-high/index.html",
     "preview": "previews/gemini-4-argon-high.jpg"
   },
@@ -43,9 +63,14 @@
     "id": "gpt-6-astra-ultra",
     "model": "GPT 6 Astra",
     "effort": "Ultra",
-    "title": "Gargantua · 黑洞观测站",
-    "description": "原生 WebGL 观测界面，提供预设、参数调节与沉浸观看。",
-    "stack": ["JavaScript", "WebGL 2"],
+    "durationSeconds": 1022,
+    "cost": "未记录",
+    "harness": "Codex",
+    "testDate": "2026/10/25",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
     "entry": "demos/gpt-6-astra-ultra/index.html",
     "preview": "previews/gpt-6-astra-ultra.jpg"
   },
@@ -53,9 +78,14 @@
     "id": "gpt-6.1-sol-ultra",
     "model": "GPT 6.1 Sol",
     "effort": "Ultra",
-    "title": "Gargantua · 黑洞观测台",
-    "description": "单文件交付的黑洞页面，包含视角预设、参数与画面导出。",
-    "stack": ["JavaScript", "WebGL 2"],
+    "durationSeconds": 1237,
+    "cost": "未记录",
+    "harness": "Codex",
+    "testDate": "2026/10/08",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
     "entry": "demos/gpt-6.1-sol-ultra/index.html",
     "preview": "previews/gpt-6.1-sol-ultra.jpg"
   },
@@ -63,9 +93,15 @@
     "id": "kimi-k3.1-pro-max",
     "model": "Kimi K3.1 Pro",
     "effort": "Max",
-    "title": "卡冈图雅 · 引力场",
-    "description": "以 Three.js 和着色器构建，搭配三种色彩预设与观测参数。",
-    "stack": ["TypeScript", "Three.js", "Vite"],
+    "durationSeconds": 3769,
+    "cost": "27.68 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/24",
+    "stack": [
+      "TypeScript",
+      "Three.js",
+      "Vite"
+    ],
     "entry": "demos/kimi-k3.1-pro-max/index.html",
     "preview": "previews/kimi-k3.1-pro-max.jpg"
   }

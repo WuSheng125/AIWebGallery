@@ -4,8 +4,6 @@
 
 项目不依赖任何运行时第三方库，也没有构建步骤：双击 `index.html`，或通过本地 HTTP 服务打开即可。
 
-![GARGANTUA preview](./preview.png)
-
 ---
 
 ## 快速开始
@@ -128,7 +126,6 @@ d²u/dφ² + u = (3/2) · Rs · u²,     u = 1/r
 gargantua-horizon/
 ├── index.html          // 页面结构、HUD、面板、启动与错误界面
 ├── styles.css          // 电影化 HUD、控制台与响应式布局
-├── preview.png         // 默认画面截图
 ├── serve.mjs           // 无依赖静态服务器
 ├── package.json
 └── js/

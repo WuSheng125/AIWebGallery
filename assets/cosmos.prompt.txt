@@ -1,0 +1,6 @@
+Asset: cosmos.png
+Created with: built-in ImageGen
+Usage: static universe background.
+
+Final prompt:
+Use case: stylized-concept. Asset type: full-bleed background image for a dark astronomy web gallery. Create a high-quality cinematic deep-space starfield, very wide landscape 16:9, at least 1920x1080. Deep ink navy and charcoal-black space, delicate real-looking tiny distant stars, very faint cobalt and dusty violet interstellar nebula clouds with a restrained warm amber glow. Quiet, low luminance, detailed and photographic in texture. The left half must stay especially dark and sparse for readable white Chinese text; the right half may contain slightly richer diffuse star dust but no distinct galaxy, because a separate rotating spiral galaxy will be layered over it. Let detail fade naturally toward the bottom. No planets, no black holes, no bright flare, no labels, no typography, no logos, no border, no UI, no watermark. This is an atmospheric background asset, not a screenshot or a webpage mockup.

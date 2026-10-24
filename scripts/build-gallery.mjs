@@ -3,11 +3,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = await realpath(fileURLToPath(new URL('..', import.meta.url)));
+const worksRoot = path.join(root, 'works');
 const output = path.join(root, '_site');
 
 // Only these browser assets enter the published site. Source servers, caches,
 // dependencies, and historical development scripts stay in the original folders.
-const galleryAssets = ['index.html', 'gallery.css', 'gallery.js', 'works.json', 'previews'];
+const galleryAssets = ['index.html', 'gallery.css', 'gallery.js', 'works.json', 'previews', 'assets'];
 const demos = [
   { id: 'claude-opus-5.5-medium', assets: ['index.html', 'css', 'js'] },
   { id: 'deepseek-v41-flash-1017-high', assets: ['index.html', 'styles.css', 'app.js'] },
@@ -26,10 +27,7 @@ async function required(source) {
     return info;
   } catch (error) {
     if (error.code === 'ENOENT') {
-      const hint = source.startsWith(path.join(root, 'kimi-k3.1-pro-max', 'dist'))
-        ? '；请先在 kimi-k3.1-pro-max 执行 npm ci 和 npm run build'
-        : '';
-      throw new Error(`缺少发布资源：${path.relative(root, source)}${hint}`);
+      throw new Error(`缺少已保存的发布资源：${path.relative(root, source)}`);
     }
     throw error;
   }
@@ -53,10 +51,10 @@ try {
   for (const asset of galleryAssets) await required(path.join(root, asset));
   for (const demo of demos) {
     if (demo.directory) {
-      await required(path.join(root, demo.id, demo.directory, 'index.html'));
+      await required(path.join(worksRoot, demo.id, demo.directory, 'index.html'));
     } else {
       for (const asset of demo.assets) {
-        await required(path.join(root, demo.id, typeof asset === 'string' ? asset : asset.source));
+        await required(path.join(worksRoot, demo.id, typeof asset === 'string' ? asset : asset.source));
       }
     }
   }
@@ -84,12 +82,12 @@ try {
   for (const demo of demos) {
     const destination = path.join(output, 'demos', demo.id);
     if (demo.directory) {
-      await copyAsset(path.join(root, demo.id, demo.directory), destination);
+      await copyAsset(path.join(worksRoot, demo.id, demo.directory), destination);
     } else {
       for (const asset of demo.assets) {
         const source = typeof asset === 'string' ? asset : asset.source;
         const target = typeof asset === 'string' ? asset : asset.target;
-        await copyAsset(path.join(root, demo.id, source), path.join(destination, target));
+        await copyAsset(path.join(worksRoot, demo.id, source), path.join(destination, target));
       }
     }
   }

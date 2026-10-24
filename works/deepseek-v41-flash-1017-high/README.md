@@ -4,8 +4,6 @@
 
 页面使用 **WebGL 2 + 自定义 GLSL 光线追踪** 实现，没有运行时第三方依赖；星场、吸积盘纹理和最终画面都在 GPU 上生成。
 
-![GARGANTUA preview](./preview.png)
-
 ## 直接运行
 
 双击打开 `index.html` 即可。页面脚本是经典脚本，不依赖 ES Module 加载，因此 `file://` 也能直接工作。

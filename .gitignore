@@ -8,6 +8,26 @@
 .DS_Store
 Thumbs.db
 
-# Kimi: keep source, configuration, lockfile, and dist; omit local capture tools.
-/kimi-k3.1-pro-max/artifacts/
-/kimi-k3.1-pro-max/scripts/
+# Local environment, credentials, and editor state
+.env
+.env.*
+!.env.example
+!.env.sample
+.npmrc
+.netrc
+.git-credentials
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+*.local
+*.tsbuildinfo
+/.aws/
+/.codex/
+/.agents/
+/.vscode/
+/.idea/
+
+# Saved work artifacts (including works/**/dist/) are published and stay tracked.
