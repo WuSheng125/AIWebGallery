@@ -1,6 +1,6 @@
 # AI Web Gallery
 
-首页展示 8 个 AI 生成的卡冈图雅黑洞网页。点击卡片后，在新标签页打开独立原页。
+首页展示 9 个 AI 生成的卡冈图雅黑洞网页。点击卡片后，在新标签页打开独立原页。
 
 ## 本地使用
 
@@ -42,7 +42,7 @@ npm run serve
 | `effort` | 推理强度或档位标签 |
 | `stack` | 技术栈字符串数组 |
 | `entry` | 原页地址：`demos/<id>/index.html` |
-| `preview` | 封面地址：`previews/<id>.jpg` |
+| `preview` | 封面地址：`previews/<id>.jpg`，截图统一使用 1280×800 分辨率 |
 | `durationSeconds` | 实际耗时，非负数字，单位为秒，可含小数；未知填 `null` |
 | `cost` | 实际费用，可直接填写文本（如 `"2.59 CNY"`、`"未记录"`）或费用对象；未知填 `null` |
 | `harness` | 实际使用的工具或运行环境名称，字符串；未知填 `null` |

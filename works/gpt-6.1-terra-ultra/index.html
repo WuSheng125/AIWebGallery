@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090b">
+  <meta name="description" content="探索黑洞吸积盘与引力透镜的交互式视觉模拟。">
+  <title>GARGANTUA · 黑洞观测站</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <main class="observatory" aria-label="黑洞视觉模拟">
+      <div class="scene" id="scene">
+        <canvas id="blackholeCanvas" aria-label="交互式黑洞场景。拖动旋转视角。"></canvas>
+        <div class="scene-vignette" aria-hidden="true"></div>
+      </div>
+
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Gargantua 黑洞观测站">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span class="brand-name">GARGANTUA <small>OBSERVATORY</small></span>
+        </a>
+        <div class="live-status"><span></span> 实时视觉模拟</div>
+        <button class="icon-button pause-button" id="pauseButton" type="button" aria-label="暂停动画" title="暂停动画">
+          <svg class="pause-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5v14M15 5v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg class="play-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 10 7-10 7V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+      </header>
+
+      <div class="scene-caption">
+        <div class="eyebrow"><span class="tiny-line"></span> 深空观测 <span class="caption-index">/ 01</span></div>
+        <h1>GARGANTUA</h1>
+        <p>凝视引力的边界</p>
+      </div>
+      <div class="scene-bottom">
+        <div class="drag-hint"><span class="mouse-icon" aria-hidden="true"></span> 拖动旋转视角</div>
+        <div class="scene-note">INSPIRED BY INTERSTELLAR <span>·</span> 视觉模拟，非科学计算</div>
+      </div>
+    </main>
+
+    <aside class="sidebar" aria-label="黑洞参数">
+      <div class="sidebar-inner">
+        <div class="sidebar-head">
+          <div>
+            <div class="sidebar-kicker">THE OBSERVATORY <span>/</span> 01</div>
+            <h2>观测控制台</h2>
+            <p>调整参数，探索引力的另一面。</p>
+          </div>
+          <span class="sidebar-symbol" aria-hidden="true">✳</span>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-heading"><span>场景参数</span><span class="section-number">01 — 06</span></div>
+
+        <div class="controls">
+          <div class="control">
+            <div class="control-top"><label for="mass">黑洞质量</label><output id="massValue" for="mass">50%</output></div>
+            <input id="mass" type="range" min="0" max="100" value="50" aria-describedby="massDescription">
+            <div class="control-bottom" id="massDescription"><span>视界大小</span><span>质量越大，暗区越大</span></div>
+          </div>
+          <div class="control">
+            <div class="control-top"><label for="diskBrightness">吸积盘亮度</label><output id="diskBrightnessValue" for="diskBrightness">70%</output></div>
+            <input id="diskBrightness" type="range" min="0" max="100" value="70">
+            <div class="control-bottom"><span>微光</span><span>耀眼</span></div>
+          </div>
+          <div class="control">
+            <div class="control-top"><label for="diskTemperature">吸积盘温度</label><output id="diskTemperatureValue" for="diskTemperature">55%</output></div>
+            <input id="diskTemperature" type="range" min="0" max="100" value="55">
+            <div class="control-bottom"><span>暖金</span><span>炽白</span></div>
+          </div>
+          <div class="control">
+            <div class="control-top"><label for="lensStrength">引力透镜</label><output id="lensStrengthValue" for="lensStrength">70%</output></div>
+            <input id="lensStrength" type="range" min="0" max="100" value="70" aria-describedby="lensDescription">
+            <div class="control-bottom" id="lensDescription"><span>光线弯曲程度</span><span>弱 <i>—</i> 强</span></div>
+          </div>
+          <div class="control">
+            <div class="control-top"><label for="rotationSpeed">盘面流速</label><output id="rotationSpeedValue" for="rotationSpeed">45%</output></div>
+            <input id="rotationSpeed" type="range" min="0" max="100" value="45">
+            <div class="control-bottom"><span>缓慢</span><span>快速</span></div>
+          </div>
+          <div class="control">
+            <div class="control-top"><label for="starDensity">背景星空</label><output id="starDensityValue" for="starDensity">65%</output></div>
+            <input id="starDensity" type="range" min="0" max="100" value="65">
+            <div class="control-bottom"><span>稀疏</span><span>繁星</span></div>
+          </div>
+        </div>
+
+        <button class="reset-button" id="resetButton" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2-5.1M4.5 5.5v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 重置观测 <span>↗</span></button>
+
+        <div class="sidebar-foot">
+          <div class="foot-label"><span class="foot-dot"></span> 关于此景象</div>
+          <p>光在强引力下弯曲，使吸积盘的远侧仿佛跃至黑洞上下方。拖动视角，观察它的变化。</p>
+          <div class="foot-meta"><span>GARGANTUA / 视觉实验</span><span>∞</span></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <script src="./blackhole.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+

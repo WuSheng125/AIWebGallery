@@ -16,6 +16,7 @@ const demos = [
   { id: 'gemini-4-argon-high', assets: ['index.html', 'styles.css', 'js', 'vendor/three.min.js'] },
   { id: 'gpt-6-astra-ultra', assets: ['index.html', 'style.css', 'renderer.js', 'app.js'] },
   { id: 'gpt-6.1-sol-ultra', assets: [{ source: 'gargantua.html', target: 'index.html' }] },
+  { id: 'gpt-6.1-terra-ultra', assets: ['index.html', 'style.css', 'blackhole.js', 'app.js'] },
   { id: 'kimi-k3.1-pro-max', directory: 'dist' },
   { id: 'kimi-k3.1-pro-max-2', directory: 'dist' },
 ];
