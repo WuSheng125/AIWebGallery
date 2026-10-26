@@ -104,5 +104,21 @@
     ],
     "entry": "demos/kimi-k3.1-pro-max/index.html",
     "preview": "previews/kimi-k3.1-pro-max.jpg"
+  },
+  {
+    "id": "kimi-k3.1-pro-max-2",
+    "model": "Kimi K3.1 Pro",
+    "effort": "Max",
+    "durationSeconds": 4620,
+    "cost": "32.93 CNY",
+    "harness": "Kimi Code",
+    "testDate": "2026/10/26",
+    "stack": [
+      "TypeScript",
+      "Three.js",
+      "Vite"
+    ],
+    "entry": "demos/kimi-k3.1-pro-max-2/index.html",
+    "preview": "previews/kimi-k3.1-pro-max-2.jpg"
   }
 ]

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050608" />
+    <meta name="description" content="实时探索卡冈图雅风格黑洞，交互体验引力透镜、相对论性吸积盘与浩瀚星空。" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307090c'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23e3c18d' stroke-width='2'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='8' fill='none' stroke='%23e3c18d' stroke-width='2' transform='rotate(-25 32 32)'/%3E%3C/svg%3E" />
+    <title>卡冈图雅 · 视界观测站</title>
+    <script type="module" crossorigin src="./assets/index-CVDyahlW.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-core-B82hNlmz.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-KVmJowyp.css">
+  </head>
+  <body>
+    <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" /><circle cx="12" cy="13" r="4" /></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.2A11.6 11.6 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-2.2 3.1M6.5 6.5C3.5 8.5 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4.1-.9" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7" /></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8V4Z" /></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6M9 8h6m2 8h6" /></symbol>
+      <symbol id="i-mouse" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6" /><path d="M12 6v4" /></symbol>
+      <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="11" ry="5" transform="rotate(-30 12 12)" /><circle cx="20" cy="7" r="1.5" /></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+    </svg>
+
+    <div id="app">
+      <div id="viewport">
+        <canvas id="scene-canvas" aria-label="可交互的黑洞三维模拟，拖拽旋转视角，滚轮缩放"></canvas>
+        <div class="scene-vignette" aria-hidden="true"></div>
+        <div class="film-grain" aria-hidden="true"></div>
+      </div>
+
+      <header class="brand ui-layer">
+        <div class="brand-mark" aria-hidden="true"><svg><use href="#i-orbit"></use></svg></div>
+        <div class="brand-name">视界<span>EVENT HORIZON</span></div>
+        <div class="brand-divider"></div>
+        <div class="brand-subtitle">深空交互观测站</div>
+      </header>
+
+      <div class="top-actions ui-layer">
+        <div class="live-status"><span class="status-dot"></span><span>实时模拟</span><span class="status-divider"></span><span id="fps-readout">60 FPS</span></div>
+        <button id="save-view" class="icon-button" aria-label="保存当前画面" data-tooltip="保存画面"><svg><use href="#i-camera"></use></svg></button>
+        <button id="fullscreen" class="icon-button" aria-label="切换全屏" data-tooltip="全屏观测"><svg><use href="#i-expand"></use></svg></button>
+        <button id="toggle-ui" class="icon-button" aria-label="隐藏界面" data-tooltip="隐藏界面 · H"><svg><use href="#i-eye"></use></svg></button>
+      </div>
+
+      <main class="scene-info ui-layer">
+        <div class="object-index"><span></span>OBJECT — 001</div>
+        <h1>卡冈图雅</h1>
+        <div class="object-name">GARGANTUA</div>
+        <p class="object-description">在光无法逃离的地方，看见时间。</p>
+        <div class="object-facts">
+          <div class="fact"><span class="fact-label">黑洞质量</span><span class="fact-value">1.0 × 10<sup>8</sup> <small>M<sub>☉</sub></small></span></div>
+          <div class="fact"><span class="fact-label">时空曲率</span><span class="fact-value" id="curvature-value">1.00 <small>×</small></span></div>
+          <div class="fact"><span class="fact-label">观测距离</span><span class="fact-value" id="distance-value">22.5 <small>r<sub>s</sub></small></span></div>
+        </div>
+      </main>
+
+      <div class="view-toolbar ui-layer" role="toolbar" aria-label="观测操作">
+        <button id="pause-simulation" class="toolbar-button" aria-label="暂停模拟"><svg><use href="#i-pause"></use></svg><span>暂停时间</span></button>
+        <span class="toolbar-divider"></span>
+        <button id="reset-view" class="toolbar-button icon-only" aria-label="重置观测视角" data-tooltip="重置视角 · R"><svg><use href="#i-reset"></use></svg></button>
+      </div>
+
+      <div class="scene-bottom ui-layer">
+        <div class="render-label"><span class="tiny-cross">+</span> SCHWARZSCHILD / REAL-TIME RAY TRACING</div>
+        <div class="pointer-hint"><svg><use href="#i-mouse"></use></svg><span>拖拽旋转</span><i></i><span>滚轮缩放</span></div>
+        <div class="scene-number">BH — 001 <span>/</span> ∞</div>
+      </div>
+
+      <aside id="control-panel" class="ui-layer" aria-label="黑洞观测参数">
+        <div class="panel-header">
+          <div><div class="panel-eyebrow">OBSERVATION CONSOLE</div><h2>观测控制</h2></div>
+          <button id="collapse-panel" class="icon-button" aria-label="收起参数面板"><svg><use href="#i-close"></use></svg></button>
+        </div>
+        <div class="panel-content">
+          <section class="preset-section" aria-labelledby="preset-heading">
+            <div class="section-heading compact"><h3 id="preset-heading">视角预设</h3><span>VIEWPOINT</span></div>
+            <div class="view-presets">
+              <button class="view-preset active" data-view="classic" aria-pressed="true"><svg viewBox="0 0 44 28" aria-hidden="true"><ellipse cx="22" cy="14" rx="17" ry="4"/><circle cx="22" cy="14" r="6"/><path d="M5 14c4-12 30-12 34 0"/></svg><span>经典</span></button>
+              <button class="view-preset" data-view="overhead" aria-pressed="false"><svg viewBox="0 0 44 28" aria-hidden="true"><ellipse cx="22" cy="14" rx="17" ry="10"/><circle cx="22" cy="14" r="6"/><ellipse cx="22" cy="14" rx="11" ry="6"/></svg><span>俯瞰</span></button>
+              <button class="view-preset" data-view="close" aria-pressed="false"><svg viewBox="0 0 44 28" aria-hidden="true"><ellipse cx="22" cy="14" rx="20" ry="3"/><circle cx="22" cy="14" r="10"/><path d="M3 14c3-16 35-16 38 0"/></svg><span>近域</span></button>
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="spacetime-heading">
+            <div class="section-heading"><h3 id="spacetime-heading"><span>01</span> 时空</h3><span>SPACETIME</span></div>
+            <div class="control-row">
+              <div class="control-label"><label for="lens-strength">引力透镜</label><output id="lens-strength-value" for="lens-strength">1.00 ×</output></div>
+              <input id="lens-strength" data-param="lensStrength" type="range" min="0" max="1.8" step="0.01" value="1" />
+              <div class="range-extents"><span>平直时空</span><span>强引力场</span></div>
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="inclination">观测倾角</label><output id="inclination-value" for="inclination">3.5°</output></div>
+              <input id="inclination" type="range" min="-85" max="85" step="0.1" value="3.5" />
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="disk-heading">
+            <div class="section-heading"><h3 id="disk-heading"><span>02</span> 吸积盘</h3><span>ACCRETION DISK</span></div>
+            <div class="control-row">
+              <div class="control-label"><label for="inner-radius">内侧半径</label><output id="inner-radius-value" for="inner-radius">3.10 rₛ</output></div>
+              <input id="inner-radius" data-param="innerRadius" type="range" min="2.2" max="5" step="0.05" value="3.1" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="outer-radius">外侧半径</label><output id="outer-radius-value" for="outer-radius">12.0 rₛ</output></div>
+              <input id="outer-radius" data-param="outerRadius" type="range" min="8" max="15" step="0.1" value="12" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="disk-brightness">辐射强度</label><output id="disk-brightness-value" for="disk-brightness">1.20 ×</output></div>
+              <input id="disk-brightness" data-param="diskBrightness" type="range" min="0.2" max="2.4" step="0.01" value="1.2" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="temperature">盘体温度</label><output id="temperature-value" for="temperature">6,200 K</output></div>
+              <input id="temperature" data-param="temperature" type="range" min="3000" max="11000" step="100" value="6200" />
+              <div class="temperature-scale" aria-hidden="true"></div>
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="turbulence">湍流细节</label><output id="turbulence-value" for="turbulence">0.75</output></div>
+              <input id="turbulence" data-param="turbulence" type="range" min="0" max="1.5" step="0.01" value="0.75" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="rotation-speed">旋转速度</label><output id="rotation-speed-value" for="rotation-speed">0.85 ×</output></div>
+              <input id="rotation-speed" data-param="rotationSpeed" type="range" min="0" max="1.5" step="0.01" value="0.85" />
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="image-heading">
+            <div class="section-heading"><h3 id="image-heading"><span>03</span> 影像</h3><span>IMAGING</span></div>
+            <div class="control-row">
+              <div class="control-label"><label for="exposure">曝光</label><output id="exposure-value" for="exposure">1.10</output></div>
+              <input id="exposure" data-param="exposure" type="range" min="0.4" max="2" step="0.01" value="1.1" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="star-density">星空密度</label><output id="star-density-value" for="star-density">0.90</output></div>
+              <input id="star-density" data-param="starDensity" type="range" min="0" max="1.5" step="0.01" value="0.9" />
+            </div>
+            <div class="control-row">
+              <div class="control-label"><label for="bloom-strength">光晕强度</label><output id="bloom-strength-value" for="bloom-strength">0.65</output></div>
+              <input id="bloom-strength" data-param="bloomStrength" type="range" min="0" max="1.5" step="0.01" value="0.65" />
+            </div>
+            <div class="toggle-list">
+              <label class="toggle-row" for="doppler"><span>多普勒增亮<small>相对论性束流效应</small></span><span class="switch"><input id="doppler" data-param="doppler" type="checkbox" checked /><span class="switch-track"></span></span></label>
+              <label class="toggle-row" for="bloom-enabled"><span>电影光晕<small>HDR 柔光与散射</small></span><span class="switch"><input id="bloom-enabled" data-param="bloomEnabled" type="checkbox" checked /><span class="switch-track"></span></span></label>
+              <label class="toggle-row" for="auto-rotate"><span>自动环绕<small>缓慢改变观测方位</small></span><span class="switch"><input id="auto-rotate" data-param="autoRotate" type="checkbox" /><span class="switch-track"></span></span></label>
+            </div>
+            <div class="quality-row"><label for="quality">渲染精度</label><div class="select-wrap"><select id="quality"><option value="auto">自动调节</option><option value="high">高画质</option><option value="performance">流畅优先</option></select><svg><use href="#i-chevron"></use></svg></div></div>
+          </section>
+        </div>
+        <div class="panel-footer"><button id="reset-parameters"><svg><use href="#i-reset"></use></svg>恢复默认参数</button><span>所有调整实时生效</span></div>
+      </aside>
+
+      <button id="mobile-panel-toggle" class="panel-open-button ui-layer"><svg><use href="#i-sliders"></use></svg><span>观测参数</span></button>
+      <button id="panel-scrim" aria-label="关闭参数面板" tabindex="-1"></button>
+      <button id="show-ui" class="show-ui-button"><svg><use href="#i-eye-off"></use></svg><span>显示界面</span><kbd>H</kbd></button>
+
+      <div id="loading-screen" role="status"><div class="loading-orbit"><span></span></div><div class="loading-title">正在弯曲时空</div><div class="loading-subtitle">INITIALIZING EVENT HORIZON</div></div>
+      <div id="webgl-error" hidden><svg><use href="#i-orbit"></use></svg><h2>无法启动时空引擎</h2><p>此体验需要支持 WebGL 2 的浏览器。<br />请开启硬件加速，或尝试更新浏览器。</p><button onclick="location.reload()">重新尝试</button></div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </body>
+</html>
