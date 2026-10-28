@@ -60,6 +60,21 @@
     "preview": "previews/gemini-4-argon-high.jpg"
   },
   {
+    "id": "glm-5.3-max",
+    "model": "GLM 5.3",
+    "effort": "Max",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL"
+    ],
+    "entry": "demos/glm-5.3-max/index.html",
+    "preview": "previews/glm-5.3-max.jpg"
+  },
+  {
     "id": "gpt-6-astra-ultra",
     "model": "GPT 6 Astra",
     "effort": "Ultra",
@@ -135,5 +150,20 @@
     ],
     "entry": "demos/kimi-k3.1-pro-max-2/index.html",
     "preview": "previews/kimi-k3.1-pro-max-2.jpg"
+  },
+  {
+    "id": "qwen3.8-max-0902-high",
+    "model": "Qwen3.8 Max 0902",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/qwen3.8-max-0902-high/index.html",
+    "preview": "previews/qwen3.8-max-0902-high.jpg"
   }
 ]

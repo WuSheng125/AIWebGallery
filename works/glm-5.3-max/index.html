@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>卡冈图雅 · Gargantua — 黑洞引力透镜模拟</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<canvas id="view"></canvas>
+
+<div id="loading">
+  <div class="ring"></div>
+  <p>正在弯曲时空…</p>
+</div>
+
+<aside id="panel" class="panel">
+  <header class="panel-head">
+    <div class="title">
+      <span class="dot"></span>
+      <h1>卡冈图雅<small>GARGANTUA</small></h1>
+    </div>
+    <button id="collapse" class="icon-btn" title="收起面板">»</button>
+  </header>
+  <div id="controls" class="controls"></div>
+  <footer class="panel-foot">
+    <div class="preset-row">
+      <button class="chip" data-preset="movie">电影模式</button>
+      <button class="chip" data-preset="real">物理模式</button>
+      <button class="chip" data-preset="extreme">极端引力</button>
+      <button class="chip" data-preset="dormant">沉睡黑洞</button>
+    </div>
+    <div class="action-row">
+      <button id="btn-shot" class="btn">保存截图</button>
+      <button id="btn-reset" class="btn ghost">重置视角</button>
+    </div>
+    <div id="stats" class="stats">-- FPS</div>
+  </footer>
+</aside>
+<button id="expand" class="expand" hidden>«</button>
+
+<div id="hint" class="hint">拖动旋转 · 滚轮缩放 · 空格暂停 · R 重置 · H 面板</div>
+<div id="errbox" class="errbox" hidden></div>
+<noscript><div class="errbox" style="display:block">需要启用 JavaScript 才能运行此页面。</div></noscript>
+
+<script src="js/shaders.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>卡冈图雅 Gargantua · 黑洞视觉模拟器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23020409'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='3.5' fill='none' stroke='%23e8b45a' stroke-width='1.8'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23000' stroke='%23f4d191' stroke-width='1.2'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<canvas id="glcanvas"></canvas>
+
+<div id="watermark">
+  <div class="wm-title">GARGANTUA · 卡冈图雅</div>
+  <div class="wm-sub">黑洞吸积盘与引力透镜实时模拟 · REAL-TIME BLACK HOLE RENDERER</div>
+</div>
+
+<div id="hud"></div>
+<div id="toast">🖱 左键拖拽旋转 &nbsp;·&nbsp; 滚轮缩放 &nbsp;·&nbsp; H 隐藏界面 &nbsp;·&nbsp; 空格 自动旋转</div>
+
+<button id="sbOpen" type="button">☰ 控制面板</button>
+
+<aside id="sidebar">
+  <div class="sb-head">
+    <div>
+      <h1>卡冈图雅<span>GARGANTUA BLACK HOLE</span></h1>
+      <p class="sub">参数控制台 · CONTROL DECK</p>
+    </div>
+    <button id="sbClose" type="button" title="收起侧边栏 (H)">✕</button>
+  </div>
+  <div class="sb-body">
+
+    <section class="block">
+      <div class="block-title"><h2>预设 <em>PRESETS</em></h2></div>
+      <div id="presets" class="preset-grid"></div>
+      <div class="btn-row">
+        <button id="btnResetParams" class="btn" type="button">重置参数</button>
+        <button id="btnResetCam" class="btn" type="button">重置视角</button>
+      </div>
+    </section>
+
+    <div id="paramSections"></div>
+
+    <section class="block">
+      <div class="block-title"><h2>操作 <em>CONTROLS</em></h2></div>
+      <ul class="keys">
+        <li><kbd>左键拖拽</kbd> 旋转视角</li>
+        <li><kbd>滚轮 / 双指捏合</kbd> 缩放距离</li>
+        <li><kbd>H</kbd> 隐藏 / 显示全部界面</li>
+        <li><kbd>空格</kbd> 切换自动旋转</li>
+        <li><kbd>R</kbd> 重置视角</li>
+      </ul>
+      <p class="foot-note">基于广义相对论光子测地线光线步进 · 多普勒聚束 · HDR 泛光</p>
+    </section>
+
+  </div>
+</aside>
+
+<div id="loading"><div class="spinner"></div><div>正在点亮吸积盘… IGNITION</div></div>
+<div id="fallback">当前浏览器不支持 WebGL2，无法渲染黑洞。<br />请使用较新版本的 Chrome / Edge / Firefox / Safari。</div>
+
+<script src="js/gl-utils.js"></script>
+<script src="js/shaders.js"></script>
+<script src="js/bloom.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
