@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>卡冈图雅 · 黑洞可视化 | Gargantua Black Hole</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+
+<!-- 顶部信息 -->
+<div id="hud">
+  <div class="hud-title">卡冈图雅<span class="hud-en">GARGANTUA</span></div>
+  <div class="hud-line" id="hud-fps">-- FPS</div>
+  <div class="hud-line" id="hud-res">-- × --</div>
+  <div class="hud-line" id="hud-mass">质量 ≈ 1.00×10⁸ M☉</div>
+  <div class="hud-line" id="hud-rs">视界半径 rₛ ≈ --</div>
+  <div class="hud-hint">拖拽旋转视角 · 滚轮缩放 · 双击复位</div>
+</div>
+
+<button id="panel-toggle" title="显示/隐藏控制面板">☰ 参数</button>
+
+<!-- 侧边栏参数面板 -->
+<aside id="panel">
+  <div class="panel-head">
+    <h1>黑洞参数</h1>
+    <p>实时调整，观察不同黑洞</p>
+  </div>
+
+  <div class="section">
+    <h2>预设</h2>
+    <div class="preset-row">
+      <button class="preset active" data-preset="gargantua">卡冈图雅</button>
+      <button class="preset" data-preset="sgra">人马座 A*</button>
+      <button class="preset" data-preset="m87">M87*</button>
+      <button class="preset" data-preset="nolens">弱透镜对比</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>黑洞</h2>
+    <div class="ctrl">
+      <label>质量（视界尺度）<span class="val" id="in-mass-v"></span></label>
+      <input type="range" id="in-mass" min="0.25" max="4" step="0.01" value="1">
+    </div>
+    <div class="ctrl">
+      <label>自旋 a<sub>*</sub>（内缘=ISCO）<span class="val" id="in-spin-v"></span></label>
+      <input type="range" id="in-spin" min="0" max="0.998" step="0.001" value="0.62">
+    </div>
+    <div class="ctrl">
+      <label>引力透镜强度<span class="val" id="in-lensing-v"></span></label>
+      <input type="range" id="in-lensing" min="0" max="1.5" step="0.01" value="1">
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>吸积盘</h2>
+    <div class="ctrl">
+      <label>内缘温度<span class="val" id="in-temp-v"></span></label>
+      <input type="range" id="in-temp" min="3000" max="22000" step="100" value="9500">
+    </div>
+    <div class="ctrl">
+      <label>盘亮度<span class="val" id="in-bright-v"></span></label>
+      <input type="range" id="in-bright" min="0.1" max="3" step="0.01" value="1.2">
+    </div>
+    <div class="ctrl">
+      <label>不透明度<span class="val" id="in-opacity-v"></span></label>
+      <input type="range" id="in-opacity" min="0.05" max="1" step="0.01" value="0.92">
+    </div>
+    <div class="ctrl">
+      <label>外缘半径<span class="val" id="in-outer-v"></span></label>
+      <input type="range" id="in-outer" min="4" max="24" step="0.1" value="12">
+    </div>
+    <div class="ctrl">
+      <label>自转速度<span class="val" id="in-speed-v"></span></label>
+      <input type="range" id="in-speed" min="0" max="2.5" step="0.01" value="1">
+    </div>
+    <div class="ctrl">
+      <label>湍流强度<span class="val" id="in-turb-v"></span></label>
+      <input type="range" id="in-turb" min="0" max="1" step="0.01" value="0.55">
+    </div>
+    <div class="ctrl">
+      <label>多普勒集束<span class="val" id="in-beaming-v"></span></label>
+      <input type="range" id="in-beaming" min="0" max="1" step="0.01" value="0.62">
+    </div>
+    <div class="ctrl">
+      <label>盘厚度 / 辉光高度<span class="val" id="in-thick-v"></span></label>
+      <input type="range" id="in-thick" min="0.2" max="2.5" step="0.01" value="0.6">
+    </div>
+    <div class="ctrl">
+      <label>体积辉光<span class="val" id="in-glow-v"></span></label>
+      <input type="range" id="in-glow" min="0" max="2" step="0.01" value="0.32">
+    </div>
+    <div class="toggle-row">
+      <button class="toggle on" id="tg-disk">吸积盘</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>星空</h2>
+    <div class="ctrl">
+      <label>星空亮度<span class="val" id="in-starbright-v"></span></label>
+      <input type="range" id="in-starbright" min="0" max="2.5" step="0.01" value="1">
+    </div>
+    <div class="ctrl">
+      <label>星密度<span class="val" id="in-stardensity-v"></span></label>
+      <input type="range" id="in-stardensity" min="0.05" max="1" step="0.01" value="0.28">
+    </div>
+    <div class="toggle-row">
+      <button class="toggle on" id="tg-stars">星空</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>渲染</h2>
+    <div class="ctrl">
+      <label>视野 FOV<span class="val" id="in-fov-v"></span></label>
+      <input type="range" id="in-fov" min="8" max="70" step="1" value="17">
+    </div>
+    <div class="ctrl">
+      <label>曝光<span class="val" id="in-exposure-v"></span></label>
+      <input type="range" id="in-exposure" min="0.3" max="2.5" step="0.01" value="1.18">
+    </div>
+    <div class="ctrl">
+      <label>泛光 Bloom<span class="val" id="in-bloom-v"></span></label>
+      <input type="range" id="in-bloom" min="0" max="1.5" step="0.01" value="0.55">
+    </div>
+    <div class="ctrl">
+      <label>渲染比例<span class="val" id="in-scale-v"></span></label>
+      <input type="range" id="in-scale" min="0.5" max="1.5" step="0.01" value="0.9">
+    </div>
+    <div class="ctrl">
+      <label>积分质量（步数）<span class="val" id="in-quality-v"></span></label>
+      <input type="range" id="in-quality" min="80" max="520" step="10" value="220">
+    </div>
+    <div class="toggle-row">
+      <button class="toggle on" id="tg-adaptive">自适应分辨率</button>
+      <button class="toggle" id="tg-rotate">自动旋转</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <button id="btn-reset" class="wide-btn">重置视角</button>
+  </div>
+
+  <div class="panel-foot">
+    <p>基于史瓦西零测地线光线弯曲积分的实时渲染：爱因斯坦环、光子环与吸积盘的引力透镜成像均为物理光线追踪结果。</p>
+  </div>
+</aside>
+
+<!-- WebGL 错误提示 -->
+<pre id="glerror"></pre>
+
+<script src="js/shaders.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

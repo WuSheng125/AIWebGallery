@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>卡冈图雅 · 引力透镜</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="view"></canvas>
+  <div class="veil" id="veil"></div>
+  <div class="frame" id="frame" aria-hidden="true">
+    <span class="tick tl"></span>
+    <span class="tick tr"></span>
+    <span class="tick bl"></span>
+    <span class="tick br"></span>
+  </div>
+
+  <header class="brand">
+    <div class="brand-kicker">Geodesic · Accretion Disk</div>
+    <h1>卡冈图雅</h1>
+    <p>GARGANTUA</p>
+  </header>
+
+  <div class="readout" id="readout">
+    <div><span>自旋</span><b id="rSpin">—</b></div>
+    <div><span>倾角</span><b id="rIncl">—</b></div>
+    <div><span>距离</span><b id="rDist">—</b></div>
+    <div><span>ISCO</span><b id="rIsco">—</b></div>
+    <div><span>视界</span><b id="rHor">—</b></div>
+    <div><span>趋近侧</span><b id="rSide">—</b></div>
+    <div><span>帧率</span><b id="rFps">—</b></div>
+  </div>
+
+  <p class="hint" id="hint">拖拽环视 · 滚轮缩放 · 右键变焦</p>
+
+  <button class="panel-toggle" id="panelToggle" type="button" aria-expanded="true">参数</button>
+
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <div>
+        <div class="kicker">Observation</div>
+        <h2>观测参数</h2>
+      </div>
+      <button class="text-btn" id="panelClose" type="button">收起</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </aside>
+
+  <div class="err" id="err" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

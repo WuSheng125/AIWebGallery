@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="《星际穿越》卡冈图雅风格黑洞实时渲染 — WebGL2 光线追踪、引力透镜、吸积盘">
+<title>GARGANTUA · 星际穿越黑洞实时渲染</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="gl-canvas"></canvas>
+
+<header id="topbar">
+  <div id="title">
+    <span class="title-main">GARGANTUA</span>
+    <span class="title-sub">星际穿越 · 黑洞实时渲染</span>
+  </div>
+  <div id="topbar-actions">
+    <button class="icon-btn" id="btn-shot" title="保存 PNG 截图 (S)">PNG</button>
+    <button class="icon-btn" id="btn-reset" title="重置全部参数 (R)">重置</button>
+    <button class="icon-btn" id="btn-about" title="物理说明 (?)">?</button>
+  </div>
+</header>
+
+<aside id="sidebar">
+  <div id="sidebar-head">
+    <div class="preset-label">预设</div>
+    <div class="preset-row" id="preset-row">
+      <button class="preset" data-preset="interstellar">星际穿越</button>
+      <button class="preset" data-preset="classic">史瓦西经典</button>
+      <button class="preset" data-preset="extreme">极端克尔 a*=0.99</button>
+      <button class="preset" data-preset="edgeon">纯侧视薄盘</button>
+      <button class="preset" data-preset="topdown">俯视</button>
+      <button class="preset" data-preset="nolens">关闭透镜对比</button>
+    </div>
+  </div>
+  <div id="sidebar-body">
+    <!-- 参数控件由 js/ui.js 依据 BH.PARAM_DEFS 生成 -->
+  </div>
+  <div id="sidebar-foot">
+    <span class="fps" id="stat-fps">— FPS</span>
+    <span class="stat" id="stat-res">—</span>
+    <span class="stat" id="stat-samples">—</span>
+  </div>
+</aside>
+
+<button id="sidebar-toggle" title="折叠 / 展开侧边栏">&#8249;</button>
+
+<div id="hud">
+  <div class="hud-line">拖拽 旋转视角 &nbsp;·&nbsp; 滚轮 推拉距离 &nbsp;·&nbsp; Shift+拖拽 调整倾角</div>
+  <div class="hud-line dim">H 隐藏界面 &nbsp;·&nbsp; R 重置 &nbsp;·&nbsp; S 截图</div>
+</div>
+
+<div id="about-overlay" class="hidden">
+  <div id="about-card">
+    <button id="about-close" title="关闭">×</button>
+    <h2>关于这个黑洞</h2>
+    <div class="about-body">
+      <h3>它是怎么画出来的</h3>
+      <p>画面不是贴图或后期特效，而是逐像素求解光线在弯曲时空里的真实路径：每一条光线都按史瓦西时空的<b>零测地线方程</b>积分，
+      <code>d²<b>r</b>/dλ² = −(3/2)·r<sub>s</sub>·h²·<b>r</b>/r⁵</code>（h 为守恒角动量）。光线被引力弯折后继续飞行，
+      于是自然产生了爱因斯坦环、光子环，以及《星际穿越》里最标志性的画面——吸积盘的<b>远侧被弯折到黑洞上方、近侧被弯折到下方</b>，形成包裹住视界的那道"光之冠"。</p>
+
+      <h3>吸积盘</h3>
+      <ul>
+        <li>极薄几何盘位于赤道面，半径位于 ISCO（最内稳定圆轨道）与外缘之间。</li>
+        <li>温度按 Shakura–Sunyaev 薄盘 <code>T ∝ r<sup>−3/4</sup></code> 分布，再经<b>黑体色温</b>映射到颜色：内缘炽白，外缘转为琥珀金——正是电影里那种温暖的色调。</li>
+        <li> differential（开普勒）剪切带动程序化湍流随时间演化，内圈转得比外圈快。</li>
+        <li>相对论<b>多普勒集束</b>使靠近观察者一侧变亮偏蓝、远离侧变暗偏红；强度为 <code>g⁴</code>。电影里诺兰为了让画面左右对称，特意把它关掉了——默认参数保留了很轻微的一点点。</li>
+        <li><b>引力红移</b> <code>√(1−r<sub>s</sub>/r)</code> 让靠近视界的辐射变暗变红。</li>
+      </ul>
+
+      <h3>天空</h3>
+      <p>背景星场与星云是按方向程序化生成的，并且同样要走过那条弯曲的光线，所以黑洞周围的星空会被拉伸、复制成环——这是引力透镜对背景的真实作用。</p>
+
+      <h3>单位</h3>
+      <p>全场采用几何单位 <code>G = c = 1</code>，并令<b>史瓦西半径 r<sub>s</sub> = 1</b>（即 M = 0.5）。所有距离滑块的单位都是 r<sub>s</sub>；史瓦西黑洞的 ISCO 正好在 3 r<sub>s</sub> 处。</p>
+
+      <h3>关于自旋</h3>
+      <p>透镜与红移采用<b>严格史瓦西解</b>（无自旋）。自旋滑块按克尔度规给出正确的 ISCO 半径并驱动"近似参考系拖曳"与多普勒不对称，属于艺术近似而非严格克尔测地线。真实卡冈图雅被设定为 a* ≈ 0.999 的近极端克尔黑洞。</p>
+
+      <h3>性能</h3>
+      <p>原生 WebGL2，零第三方依赖。HDR 浮点累积缓冲 + 渐进式多重采样（相机静止时逐帧累加做抗锯齿）+ 可分离高斯泛光 + ACES 色调映射。卡顿时请下调「渲染分辨率」与「光线步数」，或把画质预设调低。</p>
+    </div>
+  </div>
+</div>
+
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-ring"></div>
+    <p>正在构建时空…</p>
+  </div>
+</div>
+
+<div id="fatal" class="hidden"></div>
+
+<script src="js/shaders.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>卡冈图雅 · 黑洞实时引力透镜预览</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="gl"></canvas>
+
+  <!-- ── 左上角：标题 + 状态 ───────────────────────────── -->
+  <header id="hud">
+    <div class="hud-title">
+      <span class="glyph"></span>
+      <div>
+        <h1>GARGANTUA</h1>
+        <p>史瓦西时空 · 实时测地线积分 · WebGL2</p>
+      </div>
+    </div>
+    <div id="stats" class="stats"></div>
+  </header>
+
+  <!-- ── 物理信息卡片 ──────────────────────────────────── -->
+  <section id="infocard">
+    <div class="row"><span>史瓦西半径 r<sub>s</sub></span><b id="i-rs">—</b></div>
+    <div class="row"><span>最内稳定圆轨道 ISCO</span><b id="i-isco">—</b></div>
+    <div class="row"><span>ISCO 公转周期</span><b id="i-period">—</b></div>
+    <div class="row"><span>吸积盘内缘温度</span><b id="i-temp">—</b></div>
+    <div class="row"><span>光子捕获截面</span><b id="i-shadow">—</b></div>
+  </section>
+
+  <!-- ── 底部提示 ─────────────────────────────────────── -->
+  <footer id="hint">
+    <span><b>左键拖拽</b> 旋转视角</span>
+    <span><b>滚轮</b> 推拉镜头</span>
+    <span><b>Shift+拖拽</b> 微调倾角</span>
+    <span><b>H</b> 隐藏面板</span>
+    <span><b>R</b> 复位</span>
+    <span><b>P</b> 截图</span>
+  </footer>
+
+  <!-- ── 右侧参数面板 ──────────────────────────────────── -->
+  <aside id="panel">
+    <div class="panel-head">
+      <div class="tabs" id="tabs"></div>
+      <button id="btn-collapse" class="icon-btn" title="折叠面板 (H)">›</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+    <div class="panel-foot">
+      <button id="btn-reset" class="ghost-btn">恢复默认</button>
+      <button id="btn-shot" class="ghost-btn">保存截图</button>
+    </div>
+  </aside>
+
+  <button id="btn-open" class="icon-btn floating" title="展开面板 (H)">‹</button>
+
+  <!-- ── 加载 / 错误 ───────────────────────────────────── -->
+  <div id="overlay">
+    <div class="spinner"></div>
+    <p id="overlay-msg">正在初始化 WebGL2 渲染管线…</p>
+  </div>
+</div>
+
+<script src="js/glutil.js"></script>
+<script src="js/shaders.js"></script>
+<script src="js/blackhole.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/params.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

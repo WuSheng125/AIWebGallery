@@ -10,7 +10,9 @@ const output = path.join(root, '_site');
 // dependencies, and historical development scripts stay in the original folders.
 const galleryAssets = ['index.html', 'gallery.css', 'gallery.js', 'works.json', 'previews', 'assets'];
 const demos = [
+  { id: 'claude-haiku-5.5-medium', assets: ['index.html', 'style.css', 'shaders.js', 'main.js'] },
   { id: 'claude-opus-5.5-medium', assets: ['index.html', 'css', 'js'] },
+  { id: 'claude-sonnet-5.5-medium', assets: ['index.html'] },
   { id: 'deepseek-v41-flash-1017-high', assets: ['index.html', 'styles.css', 'app.js'] },
   { id: 'deepseek-v41-flash-1017-max', assets: ['index.html', 'styles.css', 'js'] },
   { id: 'gemini-4-argon-high', assets: ['index.html', 'styles.css', 'js', 'vendor/three.min.js'] },
@@ -18,9 +20,15 @@ const demos = [
   { id: 'gpt-6-astra-ultra', assets: ['index.html', 'style.css', 'renderer.js', 'app.js'] },
   { id: 'gpt-6.1-sol-ultra', assets: [{ source: 'gargantua.html', target: 'index.html' }] },
   { id: 'gpt-6.1-terra-ultra', assets: ['index.html', 'style.css', 'blackhole.js', 'app.js'] },
+  { id: 'grok-4.7-xhigh', assets: ['index.html', 'style.css', 'app.js'] },
+  { id: 'hy4-preview-high', assets: ['index.html', 'css', 'js'] },
   { id: 'kimi-k3.1-pro-max', directory: 'dist' },
   { id: 'kimi-k3.1-pro-max-2', directory: 'dist' },
+  { id: 'mimo-v2.6-pro-high', assets: ['index.html', 'css', 'js'] },
+  { id: 'minimax-m3-max', assets: ['index.html', 'css', 'js'] },
+  { id: 'muse-spark-1.3-xhigh', assets: ['index.html'] },
   { id: 'qwen3.8-max-0902-high', assets: ['index.html', 'css', 'js'] },
+  { id: 'step-5-preview-high', assets: ['index.html', 'css', 'js', 'shaders'] },
 ];
 
 async function required(source) {

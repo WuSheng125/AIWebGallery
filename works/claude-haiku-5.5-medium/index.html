@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>黑洞可视化 · 卡冈图雅</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="view"></canvas>
+    <div id="hint">拖拽旋转 · 滚轮缩放</div>
+    <div id="nogl" hidden>当前浏览器不支持 WebGL2，请更换为最新版 Chrome / Edge / Firefox。</div>
+
+    <button id="toggle" title="显示 / 隐藏侧边栏">☰</button>
+
+    <aside id="panel">
+        <header>
+            <h1>黑洞 · Gargantua</h1>
+            <p class="sub">基于测地线光线追踪的实时渲染</p>
+        </header>
+
+        <section>
+            <h2>预设</h2>
+            <div class="presets">
+                <button data-preset="interstellar">卡冈图雅</button>
+                <button data-preset="schwarzschild">施瓦西</button>
+                <button data-preset="extreme">极限自旋</button>
+                <button data-preset="faceon">正面盘</button>
+            </div>
+        </section>
+
+        <section>
+            <h2>黑洞</h2>
+            <label>
+                <span>自旋 a <output data-out="spin"></output></span>
+                <input type="range" data-key="spin" min="0" max="0.998" step="0.001">
+            </label>
+            <label>
+                <span>观察距离 <output data-out="dist"></output></span>
+                <input type="range" data-key="dist" min="4" max="60" step="0.1">
+            </label>
+            <div class="readonly">
+                <span>ISCO 内缘半径 (rs)</span><output data-out="isco"></output>
+            </div>
+        </section>
+
+        <section>
+            <h2>吸积盘</h2>
+            <label>
+                <span>外缘半径 (rs) <output data-out="outer"></output></span>
+                <input type="range" data-key="outer" min="6" max="30" step="0.1">
+            </label>
+            <label>
+                <span>倾角 (°) <output data-out="tilt"></output></span>
+                <input type="range" data-key="tilt" min="0" max="85" step="1">
+            </label>
+            <label>
+                <span>亮度 <output data-out="bright"></output></span>
+                <input type="range" data-key="bright" min="0" max="3" step="0.05">
+            </label>
+            <label>
+                <span>内缘温度 (K) <output data-out="temp"></output></span>
+                <input type="range" data-key="temp" min="2500" max="12000" step="100">
+            </label>
+            <label>
+                <span>不透明度 <output data-out="opacity"></output></span>
+                <input type="range" data-key="opacity" min="0.05" max="1" step="0.01">
+            </label>
+            <label>
+                <span>多普勒增亮 <output data-out="doppler"></output></span>
+                <input type="range" data-key="doppler" min="0" max="1.5" step="0.05">
+            </label>
+        </section>
+
+        <section>
+            <h2>光学</h2>
+            <label>
+                <span>引力透镜强度 <output data-out="lens"></output></span>
+                <input type="range" data-key="lens" min="0" max="2" step="0.05">
+            </label>
+            <label>
+                <span>框架拖拽 <output data-out="frame"></output></span>
+                <input type="range" data-key="frame" min="0" max="3" step="0.05">
+            </label>
+            <label>
+                <span>星空密度 <output data-out="stars"></output></span>
+                <input type="range" data-key="stars" min="0" max="1" step="0.02">
+            </label>
+            <label>
+                <span>泛光 <output data-out="bloom"></output></span>
+                <input type="range" data-key="bloom" min="0" max="2" step="0.05">
+            </label>
+            <label>
+                <span>曝光 <output data-out="exposure"></output></span>
+                <input type="range" data-key="exposure" min="0.2" max="3" step="0.05">
+            </label>
+        </section>
+
+        <section>
+            <h2>渲染</h2>
+            <label>
+                <span>光线步数</span>
+                <select data-key="steps">
+                    <option value="160">160 · 快</option>
+                    <option value="260">260 · 标准</option>
+                    <option value="380">380 · 精细</option>
+                </select>
+            </label>
+            <label>
+                <span>分辨率比例 <output data-out="scale"></output></span>
+                <input type="range" data-key="scale" min="0.4" max="1" step="0.05">
+            </label>
+            <label class="check">
+                <input type="checkbox" data-key="adaptive">
+                <span>根据帧率自动调整分辨率</span>
+            </label>
+            <label>
+                <span>盘面转速 <output data-out="speed"></output></span>
+                <input type="range" data-key="speed" min="0" max="3" step="0.05">
+            </label>
+            <label class="check">
+                <input type="checkbox" data-key="autoRotate">
+                <span>自动环绕观察</span>
+            </label>
+            <div class="readonly">
+                <span>帧率</span><output data-out="fps">--</output>
+            </div>
+        </section>
+
+        <section class="actions">
+            <button id="resetView">重置视角</button>
+            <button id="shot">保存截图</button>
+        </section>
+    </aside>
+
+    <script src="shaders.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

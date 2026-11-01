@@ -1,5 +1,20 @@
 [
   {
+    "id": "claude-haiku-5.5-medium",
+    "model": "Claude Haiku 5.5",
+    "effort": "Medium",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/claude-haiku-5.5-medium/index.html",
+    "preview": "previews/claude-haiku-5.5-medium.jpg"
+  },
+  {
     "id": "claude-opus-5.5-medium",
     "model": "Claude Opus 5.5",
     "effort": "Medium",
@@ -13,6 +28,21 @@
     ],
     "entry": "demos/claude-opus-5.5-medium/index.html",
     "preview": "previews/claude-opus-5.5-medium.jpg"
+  },
+  {
+    "id": "claude-sonnet-5.5-medium",
+    "model": "Claude Sonnet 5.5",
+    "effort": "Medium",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/claude-sonnet-5.5-medium/index.html",
+    "preview": "previews/claude-sonnet-5.5-medium.jpg"
   },
   {
     "id": "deepseek-v41-flash-1017-high",
@@ -120,6 +150,36 @@
     "preview": "previews/gpt-6.1-terra-ultra.jpg"
   },
   {
+    "id": "grok-4.7-xhigh",
+    "model": "Grok 4.7",
+    "effort": "XHigh",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/grok-4.7-xhigh/index.html",
+    "preview": "previews/grok-4.7-xhigh.jpg"
+  },
+  {
+    "id": "hy4-preview-high",
+    "model": "HY4 Preview",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/hy4-preview-high/index.html",
+    "preview": "previews/hy4-preview-high.jpg"
+  },
+  {
     "id": "kimi-k3.1-pro-max",
     "model": "Kimi K3.1 Pro",
     "effort": "Max",
@@ -152,6 +212,51 @@
     "preview": "previews/kimi-k3.1-pro-max-2.jpg"
   },
   {
+    "id": "mimo-v2.6-pro-high",
+    "model": "MiMo V2.6 Pro",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/mimo-v2.6-pro-high/index.html",
+    "preview": "previews/mimo-v2.6-pro-high.jpg"
+  },
+  {
+    "id": "minimax-m3-max",
+    "model": "MiniMax M3",
+    "effort": "Max",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/minimax-m3-max/index.html",
+    "preview": "previews/minimax-m3-max.jpg"
+  },
+  {
+    "id": "muse-spark-1.3-xhigh",
+    "model": "Muse Spark 1.3",
+    "effort": "XHigh",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL"
+    ],
+    "entry": "demos/muse-spark-1.3-xhigh/index.html",
+    "preview": "previews/muse-spark-1.3-xhigh.jpg"
+  },
+  {
     "id": "qwen3.8-max-0902-high",
     "model": "Qwen3.8 Max 0902",
     "effort": "High",
@@ -165,5 +270,20 @@
     ],
     "entry": "demos/qwen3.8-max-0902-high/index.html",
     "preview": "previews/qwen3.8-max-0902-high.jpg"
+  },
+  {
+    "id": "step-5-preview-high",
+    "model": "Step 5 Preview",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/step-5-preview-high/index.html",
+    "preview": "previews/step-5-preview-high.jpg"
   }
 ]
