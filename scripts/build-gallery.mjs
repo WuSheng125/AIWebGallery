@@ -15,6 +15,7 @@ const demos = [
   { id: 'claude-sonnet-5.5-medium', assets: ['index.html'] },
   { id: 'deepseek-v41-flash-1017-high', assets: ['index.html', 'styles.css', 'app.js'] },
   { id: 'deepseek-v41-flash-1017-max', assets: ['index.html', 'styles.css', 'js'] },
+  { id: 'gemini-3.8-flash-high', assets: ['index.html'] },
   { id: 'gemini-4-argon-high', assets: ['index.html', 'styles.css', 'js', 'vendor/three.min.js'] },
   { id: 'glm-5.3-max', assets: ['index.html', 'css', 'js'] },
   { id: 'gpt-6-astra-ultra', assets: ['index.html', 'style.css', 'renderer.js', 'app.js'] },

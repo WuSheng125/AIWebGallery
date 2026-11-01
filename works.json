@@ -75,6 +75,21 @@
     "preview": "previews/deepseek-v41-flash-1017-max.jpg"
   },
   {
+    "id": "gemini-3.8-flash-high",
+    "model": "Gemini 3.8 Flash",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/gemini-3.8-flash-high/index.html",
+    "preview": "previews/gemini-3.8-flash-high.jpg"
+  },
+  {
     "id": "gemini-4-argon-high",
     "model": "Gemini 4 Argon",
     "effort": "High",

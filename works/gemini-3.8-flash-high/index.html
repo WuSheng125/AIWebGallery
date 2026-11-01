@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gargantua Black Hole - 卡冈图雅黑洞引力透镜全特效模拟系统</title>
+  <style>
+    :root {
+      --bg-panel: rgba(10, 14, 22, 0.82);
+      --bg-panel-hover: rgba(18, 24, 38, 0.92);
+      --border-panel: rgba(255, 255, 255, 0.12);
+      --border-accent: rgba(255, 170, 60, 0.6);
+      --accent: #ff9f38;
+      --accent-glow: rgba(255, 159, 56, 0.4);
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-bright: #ffffff;
+      --font-mono: 'Consolas', 'Courier New', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000000;
+      color: var(--text);
+      font-family: var(--font-sans);
+    }
+
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Top Navigation HUD */
+    .top-bar {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .brand {
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-panel);
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand h1 span.highlight {
+      color: var(--accent);
+      text-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    .brand p {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      margin-top: 3px;
+      font-family: var(--font-mono);
+    }
+
+    .hud-stats {
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-panel);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      display: flex;
+      gap: 16px;
+      color: var(--text-dim);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    .hud-stats span b {
+      color: #48bb78;
+    }
+
+    /* Sidebar Control Panel */
+    .sidebar {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      width: 380px;
+      max-height: calc(100vh - 40px);
+      background: var(--bg-panel);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--border-panel);
+      border-radius: 12px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    }
+
+    .sidebar.collapsed,
+    .sidebar.collapsed * {
+      display: none !important;
+    }
+
+    .sidebar-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-header h2 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 1px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    .sidebar-content {
+      padding: 16px 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+    }
+
+    /* Section Accordions / Groups */
+    .control-group {
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 14px 16px;
+    }
+
+    .group-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Sliders and Input Rows */
+    .control-row {
+      margin-bottom: 14px;
+    }
+
+    .control-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .control-label span.value {
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 10px var(--accent);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* Preset Button Grid */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-panel);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      background: rgba(255, 159, 56, 0.15);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Switch toggle */
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .switch-label {
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: .3s;
+      border-radius: 22px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .btn-icon {
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-panel);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-panel-hover);
+      border-color: var(--accent);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Camera control guidance */
+    .hint-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 24px;
+      z-index: 10;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-panel);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      gap: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+    }
+
+    .hint-bar kbd {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    /* Sidebar trigger button when collapsed */
+    .sidebar-trigger {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      z-index: 15;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-panel);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s;
+    }
+
+    .sidebar-trigger:hover {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--bg-panel-hover);
+    }
+
+    .sidebar-trigger.visible {
+      display: flex;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: calc(100% - 32px);
+        right: 16px;
+        top: 16px;
+        max-height: 80vh;
+      }
+      .brand {
+        padding: 8px 14px;
+      }
+      .hud-stats, .hint-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container">
+    <canvas id="glcanvas"></canvas>
+  </div>
+
+  <!-- HUD Top Left -->
+  <div class="top-bar">
+    <div class="brand">
+      <h1>GARGANTUA <span class="highlight">卡冈图雅</span></h1>
+      <p>INTERSTELLAR GENERAL RELATIVISTIC BLACK HOLE SIMULATOR</p>
+    </div>
+    <div class="hud-stats">
+      <span>FPS: <b id="stat-fps">60</b></span>
+      <span>分辨率: <b id="stat-res">100%</b></span>
+      <span>倾角: <b id="stat-theta">7.5°</b></span>
+    </div>
+  </div>
+
+  <!-- Hint Bottom Left -->
+  <div class="hint-bar">
+    <span><kbd>鼠标左键拖拽</kbd> 旋转观测视角</span>
+    <span><kbd>鼠标滚轮</kbd> 变焦缩放</span>
+    <span><kbd>鼠标右键拖拽</kbd> 调节距离</span>
+    <span><kbd>R</kbd> 重置电影视角</span>
+  </div>
+
+  <!-- Collapsed Sidebar Trigger -->
+  <button id="sidebar-open-btn" class="sidebar-trigger">
+    ⚙️ <span>参数控制台</span>
+  </button>
+
+  <!-- Sidebar Control Panel -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h2>⚙️ 物理与视觉参数控制台</h2>
+      <button id="sidebar-close-btn" class="close-btn" title="收起面板">✕</button>
+    </div>
+    <div class="sidebar-content">
+
+      <!-- 预设模式 -->
+      <div class="control-group">
+        <div class="group-title">电影与经典预设 (Presets)</div>
+        <div class="preset-grid">
+          <button class="preset-btn active" data-preset="interstellar">🎬 星际穿越电影</button>
+          <button class="preset-btn" data-preset="eht">📡 EHT真实观测(M87*)</button>
+          <button class="preset-btn" data-preset="supermassive">🌌 炽热超巨质量</button>
+          <button class="preset-btn" data-preset="polar">🪐 极轴俯瞰视角</button>
+        </div>
+      </div>
+
+      <!-- 时空引力参数 -->
+      <div class="control-group">
+        <div class="group-title">引力场与透镜效应 (Relativity)</div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>黑洞质量 / 视界大小 (Mass M)</span>
+            <span class="value" id="val-mass">1.00</span>
+          </div>
+          <input type="range" id="param-mass" min="0.3" max="2.2" step="0.05" value="1.0">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>引力透镜偏折强度 (Lens Power)</span>
+            <span class="value" id="val-lens">1.00</span>
+          </div>
+          <input type="range" id="param-lens" min="0.0" max="2.5" step="0.05" value="1.0">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>光子环辉光锐度 (Photon Ring)</span>
+            <span class="value" id="val-ring">1.80</span>
+          </div>
+          <input type="range" id="param-ring" min="0.2" max="3.5" step="0.1" value="1.8">
+        </div>
+      </div>
+
+      <!-- 吸积盘几何与物理参数 -->
+      <div class="control-group">
+        <div class="group-title">吸积盘结构与动态 (Accretion Disk)</div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>吸积盘内径 (r_in)</span>
+            <span class="value" id="val-rin">2.60</span>
+          </div>
+          <input type="range" id="param-rin" min="1.8" max="4.0" step="0.05" value="2.6">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>吸积盘外径 (r_out)</span>
+            <span class="value" id="val-rout">12.50</span>
+          </div>
+          <input type="range" id="param-rout" min="6.0" max="20.0" step="0.2" value="12.5">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>气体旋转转速 (Spin Speed)</span>
+            <span class="value" id="val-speed">0.85</span>
+          </div>
+          <input type="range" id="param-speed" min="-2.0" max="3.0" step="0.05" value="0.85">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>等离子涡流扰动 (Turbulence)</span>
+            <span class="value" id="val-noise">1.20</span>
+          </div>
+          <input type="range" id="param-noise" min="0.0" max="2.5" step="0.05" value="1.2">
+        </div>
+      </div>
+
+      <!-- 相对论多普勒频移与增亮 -->
+      <div class="control-group">
+        <div class="group-title">相对论束流效应 (Doppler Beaming)</div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>多普勒增亮不对称性 (Beaming)</span>
+            <span class="value" id="val-doppler">1.25</span>
+          </div>
+          <input type="range" id="param-doppler" min="0.0" max="2.5" step="0.05" value="1.25">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>引力红移效应 (Grav. Redshift)</span>
+            <span class="value" id="val-redshift">0.75</span>
+          </div>
+          <input type="range" id="param-redshift" min="0.0" max="2.0" step="0.05" value="0.75">
+        </div>
+      </div>
+
+      <!-- 光学渲染与色彩环境 -->
+      <div class="control-group">
+        <div class="group-title">光学色彩与背景星空 (Optics & Stars)</div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>吸积盘综合发光亮度</span>
+            <span class="value" id="val-bright">1.45</span>
+          </div>
+          <input type="range" id="param-bright" min="0.2" max="3.0" step="0.05" value="1.45">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>色温偏向 (冷艳金白 ↔ 炽热烈红)</span>
+            <span class="value" id="val-temp">1.10</span>
+          </div>
+          <input type="range" id="param-temp" min="0.4" max="2.0" step="0.05" value="1.1">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>背景深空星海密度</span>
+            <span class="value" id="val-stars">1.20</span>
+          </div>
+          <input type="range" id="param-stars" min="0.1" max="2.5" step="0.05" value="1.2">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>银河尘埃星云辉光</span>
+            <span class="value" id="val-nebula">0.85</span>
+          </div>
+          <input type="range" id="param-nebula" min="0.0" max="2.0" step="0.05" value="0.85">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>镜头泛光与辉光溢出 (Bloom)</span>
+            <span class="value" id="val-bloom">1.35</span>
+          </div>
+          <input type="range" id="param-bloom" min="0.0" max="3.0" step="0.05" value="1.35">
+        </div>
+      </div>
+
+      <!-- 性能与画质控制 -->
+      <div class="control-group">
+        <div class="group-title">性能优化与画质模式 (Performance)</div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>光线追踪步进精度 (Steps)</span>
+            <span class="value" id="val-steps">220</span>
+          </div>
+          <input type="range" id="param-steps" min="80" max="320" step="10" value="220">
+        </div>
+        <div class="control-row">
+          <div class="control-label">
+            <span>动态渲染分辨率 (Scale)</span>
+            <span class="value" id="val-res">1.0x</span>
+          </div>
+          <input type="range" id="param-res" min="0.5" max="1.5" step="0.1" value="1.0">
+        </div>
+        <div class="switch-row">
+          <span class="switch-label">自动环绕漫游动画 (Auto Orbit)</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="param-autorotate" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="switch-row">
+          <span class="switch-label">时空引力光线网格参考线</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="param-grid">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button id="btn-reset" class="btn-icon" style="flex: 1; justify-content: center;">🔄 重置默认参数</button>
+        <button id="btn-fullscreen" class="btn-icon" style="flex: 1; justify-content: center;">⛶ 全屏沉浸模式</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WebGL 2.0 Shader Engine -->
+  <script>
+    const vsSource = `#version 300 es
+      in vec2 a_position;
+      out vec2 v_uv;
+      void main() {
+        v_uv = a_position * 0.5 + 0.5;
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+    `;
+
+    const fsSource = `#version 300 es
+      precision highp float;
+
+      in vec2 v_uv;
+      out vec4 fragColor;
+
+      uniform vec2 u_resolution;
+      uniform float u_time;
+      uniform vec3 u_cam_pos;
+      uniform vec3 u_cam_target;
+      uniform float u_fov;
+
+      // Physics & Optics Uniforms
+      uniform float u_mass;           // M
+      uniform float u_lens_scale;     // Deflection strength
+      uniform float u_ring_sharpness; // Einstein ring intensity
+      uniform float u_r_in;           // Inner accretion radius
+      uniform float u_r_out;          // Outer accretion radius
+      uniform float u_spin_speed;     // Matter rotation speed
+      uniform float u_turbulence;     // Streamer turbulence
+      uniform float u_doppler;        // Relativistic Doppler beaming
+      uniform float u_redshift;       // Gravitational redshift
+      uniform float u_brightness;     // Accretion disk brightness
+      uniform float u_color_temp;     // Color temperature
+      uniform float u_star_density;   // Stars density
+      uniform float u_nebula_glow;    // Milky way haze
+      uniform float u_bloom;          // Glow spillover
+      uniform int   u_max_steps;      // Raymarching steps
+      uniform int   u_show_grid;      // Relativistic grid
+
+      #define PI 3.14159265359
+
+      // --- Noise and Hash Functions ---
+      float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+      }
+
+      float noise2d(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+      }
+
+      float fbm(vec2 p) {
+        float val = 0.0;
+        float amp = 0.5;
+        for (int i = 0; i < 4; i++) {
+          val += amp * noise2d(p);
+          p *= 2.02;
+          amp *= 0.5;
+        }
+        return val;
+      }
+
+      // --- Background Starfield & Milky Way ---
+      vec3 renderBackground(vec3 dir) {
+        vec2 uv = vec2(atan(dir.z, dir.x), asin(clamp(dir.y, -1.0, 1.0)));
+
+        // Deep space cosmic haze / Nebula
+        float neb1 = fbm(uv * 2.5 + vec2(1.2, 3.4));
+        float neb2 = fbm(uv * 5.0 - vec2(4.1, 2.7));
+        float galaxyBand = exp(-abs(dir.y) * 4.2);
+        vec3 nebulaColor = vec3(0.12, 0.22, 0.45) * neb1 + vec3(0.48, 0.22, 0.35) * neb2;
+        nebulaColor *= galaxyBand * u_nebula_glow * 1.8;
+
+        // Stars Layer 1: Dense faint stars
+        vec3 stars = vec3(0.0);
+        vec2 starGrid1 = uv * 95.0 * u_star_density;
+        vec2 id1 = floor(starGrid1);
+        float h1 = hash(id1);
+        if (h1 > 0.88) {
+          vec2 localPos = fract(starGrid1) - 0.5;
+          float d = length(localPos);
+          float brightness = smoothstep(0.35, 0.01, d) * pow((h1 - 0.88) / 0.12, 2.5);
+          vec3 starColor = mix(vec3(0.8, 0.9, 1.0), vec3(1.0, 0.85, 0.7), hash(id1 + 12.3));
+          stars += starColor * brightness * 1.5;
+        }
+
+        // Stars Layer 2: Bright sparkling stars
+        vec2 starGrid2 = uv * 38.0 * u_star_density;
+        vec2 id2 = floor(starGrid2);
+        float h2 = hash(id2 + 99.4);
+        if (h2 > 0.96) {
+          vec2 localPos = fract(starGrid2) - 0.5;
+          float d = length(localPos);
+          float sparkle = (0.8 + 0.2 * sin(u_time * 2.5 + h2 * 40.0));
+          float brightness = smoothstep(0.28, 0.005, d) * pow((h2 - 0.96) / 0.04, 2.0);
+          vec3 starColor = mix(vec3(0.9, 0.95, 1.0), vec3(1.0, 0.75, 0.5), hash(id2 + 45.1));
+          stars += starColor * brightness * 3.5 * sparkle;
+        }
+
+        // Coordinate space distortion grid if enabled
+        if (u_show_grid > 0) {
+          vec2 g = abs(fract(uv * 12.0) - 0.5);
+          float line = smoothstep(0.02, 0.0, min(g.x, g.y));
+          stars += vec3(0.0, 0.45, 0.8) * line * 0.4;
+        }
+
+        return nebulaColor + stars;
+      }
+
+      // --- Accretion Disk Equatorial Plane Crossing Emission ---
+      vec4 sampleDiskSurface(vec3 pos, vec3 rayDir, float M) {
+        float r = length(pos.xz);
+        if (r < u_r_in || r > u_r_out) {
+          return vec4(0.0);
+        }
+
+        // Radial brightness profile: peaks near inner edge, smoothly fades towards outer edge
+        float rNorm = (r - u_r_in) / (u_r_out - u_r_in);
+        float radialFactor = smoothstep(0.0, 0.08, rNorm) * pow(1.0 - rNorm, 1.1);
+
+        // Keplerian angular velocity omega ~ sqrt(M/r^3)
+        float omega = sqrt(M / (r * r * r)) * u_spin_speed;
+        float angle = atan(pos.z, pos.x) - omega * u_time;
+
+        // Plasma streamers and turbulence
+        vec2 noiseCoord = vec2(r * 2.4, angle * 3.2);
+        float gasDensity = fbm(noiseCoord);
+        float fineFibers = fbm(vec2(r * 7.5, angle * 8.0 + noiseCoord.x * 2.0));
+        gasDensity = mix(gasDensity, fineFibers, 0.45);
+        gasDensity = smoothstep(0.18, 0.85, gasDensity) * (1.0 + u_turbulence * 0.7);
+
+        // Concentric ring structure
+        float ringPattern = 0.82 + 0.18 * sin(r * 16.0 - angle * 2.0);
+        float density = radialFactor * gasDensity * ringPattern;
+
+        // --- Relativistic Doppler Beaming ---
+        vec3 v_tangent = normalize(vec3(-pos.z, 0.0, pos.x));
+        vec3 toCamera = -rayDir;
+        float v_mag = clamp(sqrt(M / r) * 0.65, 0.0, 0.95);
+        float beta = v_mag;
+        float cosTheta = dot(v_tangent, toCamera);
+
+        float gamma = 1.0 / sqrt(max(0.01, 1.0 - beta * beta));
+        float dopplerFactor = 1.0 / (gamma * (1.0 - beta * cosTheta));
+        float beaming = pow(dopplerFactor, 3.2 * u_doppler);
+
+        // Gravitational redshift
+        float gravRedshift = sqrt(max(0.05, 1.0 - (2.0 * M * u_redshift) / r));
+
+        // Effective Temperature & Base Blackbody Color
+        float temp = (pow(u_r_in / r, 0.8) * 1.8 + 0.3) * u_color_temp * (dopplerFactor * gravRedshift);
+
+        vec3 innerColor = vec3(1.0, 0.98, 0.92); // White-hot incandescent
+        vec3 midColor   = vec3(1.0, 0.62, 0.16); // Gargantua gold/orange
+        vec3 outerColor = vec3(0.85, 0.22, 0.03); // Deep red gas
+        vec3 edgeSmoke  = vec3(0.20, 0.05, 0.02); // Tenuous dust edge
+
+        vec3 color;
+        if (temp > 1.8) {
+          color = mix(midColor, innerColor, clamp((temp - 1.8) / 1.2, 0.0, 1.0));
+        } else if (temp > 0.9) {
+          color = mix(outerColor, midColor, clamp((temp - 0.9) / 0.9, 0.0, 1.0));
+        } else {
+          color = mix(edgeSmoke, outerColor, clamp(temp / 0.9, 0.0, 1.0));
+        }
+
+        color *= beaming * u_brightness * 3.4;
+        float alpha = clamp(density * 1.5, 0.0, 0.95);
+
+        return vec4(color, alpha);
+      }
+
+      void main() {
+        vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+
+        // Construct camera coordinate frame
+        vec3 forward = normalize(u_cam_target - u_cam_pos);
+        vec3 worldUp = vec3(0.0, 1.0, 0.0);
+        vec3 right = normalize(cross(forward, worldUp));
+        vec3 up = cross(right, forward);
+
+        vec3 rayOrigin = u_cam_pos;
+        vec3 rayDir = normalize(forward + (uv.x * right + uv.y * up) * tan(u_fov * 0.5 * PI / 180.0));
+
+        vec3 currentPos = rayOrigin;
+        vec3 currentDir = rayDir;
+
+        // Conserved angular momentum magnitude h^2 = |r x v|^2
+        vec3 L = cross(currentPos, currentDir);
+        float h2 = dot(L, L);
+
+        float M = u_mass;
+        float r_s = 2.0 * M;              // Schwarzschild radius (Event Horizon)
+        float photon_sphere = 1.5 * r_s;     // Photon Sphere radius (r = 3M)
+
+        vec3 accumulatedColor = vec3(0.0);
+        float accumulatedAlpha = 0.0;
+        float min_dist_to_center = 1e6;
+        bool hitHorizon = false;
+
+        float prevY = currentPos.y;
+        int steps = u_max_steps;
+
+        for (int i = 0; i < steps; i++) {
+          float r = length(currentPos);
+          min_dist_to_center = min(min_dist_to_center, r);
+
+          // 1. Check Event Horizon collision
+          if (r < r_s * 1.01) {
+            hitHorizon = true;
+            break;
+          }
+
+          // 2. Escape condition (far field moving outwards)
+          if (r > 42.0 && dot(currentPos, currentDir) > 0.0) {
+            break;
+          }
+
+          // 3. Adaptive Step Size (balanced for near & far field)
+          float step_size = clamp(0.022 * r, 0.028, 0.28);
+
+          // 4. Equatorial Plane Crossing Detection (Accretion Disk)
+          float curY = currentPos.y;
+          if (prevY * curY <= 0.0 && abs(prevY - curY) > 0.0001) {
+            float tPlane = prevY / (prevY - curY);
+            vec3 planeIntersect = currentPos - currentDir * ((1.0 - tPlane) * step_size);
+            
+            vec4 diskEmission = sampleDiskSurface(planeIntersect, currentDir, M);
+            if (diskEmission.a > 0.001) {
+              float contrib = diskEmission.a * (1.0 - accumulatedAlpha);
+              accumulatedColor += diskEmission.rgb * contrib;
+              accumulatedAlpha += contrib;
+              if (accumulatedAlpha >= 0.98) {
+                break;
+              }
+            }
+          }
+          prevY = curY;
+
+          // 5. Conserved Angular Momentum Geodesic Deflection:
+          vec3 curL = cross(currentPos, currentDir);
+          float cur_h2 = dot(curL, curL);
+
+          float r2 = r * r;
+          float r5 = r2 * r2 * r;
+          float a_mag = (1.5 * r_s * cur_h2 * u_lens_scale) / r5;
+          currentDir = normalize(currentDir - currentPos * (a_mag * step_size));
+
+          // Advance ray
+          currentPos += currentDir * step_size;
+        }
+
+        // Background Starfield & Deep Sky
+        vec3 finalColor = accumulatedColor;
+        if (!hitHorizon && accumulatedAlpha < 0.98) {
+          vec3 bg = renderBackground(currentDir);
+          finalColor += bg * (1.0 - accumulatedAlpha);
+        }
+
+        // --- Einstein Photon Sphere Ring Glow ---
+        float ringDist = abs(min_dist_to_center - photon_sphere);
+        float photonRing = exp(-ringDist * 14.0 / max(0.2, u_ring_sharpness)) * u_ring_sharpness;
+        vec3 ringGlow = vec3(1.0, 0.88, 0.65) * photonRing * 0.75;
+        finalColor += ringGlow * (1.0 - (hitHorizon ? 1.0 : 0.0) * 0.4);
+
+        // --- Cinematic Bloom & Lens Flare ---
+        float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
+        vec3 bloom = vec3(1.0, 0.65, 0.25) * pow(max(0.0, luminance - 0.65), 2.2) * u_bloom * 0.45;
+        finalColor += bloom;
+
+        // --- ACES Film Tone Mapping & Color Grading ---
+        vec3 x = finalColor * 0.95;
+        vec3 mapped = (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
+        mapped = clamp(mapped, 0.0, 1.0);
+
+        // Subtle Vignette
+        float vignette = 1.0 - dot(uv, uv) * 0.25;
+        mapped *= vignette;
+
+        // Gamma 2.2
+        vec3 srgb = pow(mapped, vec3(1.0 / 2.2));
+
+        fragColor = vec4(srgb, 1.0);
+      }
+    `;
+
+    // --- WebGL2 Setup & Controller ---
+    const canvas = document.getElementById('glcanvas');
+    const gl = canvas.getContext('webgl2', {
+      antialias: false,
+      depth: false,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+
+    if (!gl) {
+      alert('您的浏览器不支持 WebGL 2.0，请启用硬件加速或使用现代浏览器');
+    }
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error('Program link error:', gl.getProgramInfoLog(program));
+    }
+    gl.useProgram(program);
+
+    // Quad Geometry
+    const quadBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1,
+       1, -1,
+      -1,  1,
+      -1,  1,
+       1, -1,
+       1,  1
+    ]), gl.STATIC_DRAW);
+
+    const aPosition = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(aPosition);
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+    // Uniform Locations
+    const u = {
+      resolution: gl.getUniformLocation(program, 'u_resolution'),
+      time: gl.getUniformLocation(program, 'u_time'),
+      cam_pos: gl.getUniformLocation(program, 'u_cam_pos'),
+      cam_target: gl.getUniformLocation(program, 'u_cam_target'),
+      fov: gl.getUniformLocation(program, 'u_fov'),
+
+      mass: gl.getUniformLocation(program, 'u_mass'),
+      lens_scale: gl.getUniformLocation(program, 'u_lens_scale'),
+      ring_sharpness: gl.getUniformLocation(program, 'u_ring_sharpness'),
+      r_in: gl.getUniformLocation(program, 'u_r_in'),
+      r_out: gl.getUniformLocation(program, 'u_r_out'),
+      spin_speed: gl.getUniformLocation(program, 'u_spin_speed'),
+      turbulence: gl.getUniformLocation(program, 'u_turbulence'),
+      doppler: gl.getUniformLocation(program, 'u_doppler'),
+      redshift: gl.getUniformLocation(program, 'u_redshift'),
+      brightness: gl.getUniformLocation(program, 'u_brightness'),
+      color_temp: gl.getUniformLocation(program, 'u_color_temp'),
+      star_density: gl.getUniformLocation(program, 'u_star_density'),
+      nebula_glow: gl.getUniformLocation(program, 'u_nebula_glow'),
+      bloom: gl.getUniformLocation(program, 'u_bloom'),
+      max_steps: gl.getUniformLocation(program, 'u_max_steps'),
+      show_grid: gl.getUniformLocation(program, 'u_show_grid')
+    };
+
+    // --- State & Parameters Management ---
+    const params = {
+      mass: 1.0,
+      lensScale: 1.0,
+      ringSharpness: 1.8,
+      rIn: 2.6,
+      rOut: 12.5,
+      spinSpeed: 0.85,
+      turbulence: 1.2,
+      doppler: 1.25,
+      redshift: 0.75,
+      brightness: 1.45,
+      colorTemp: 1.1,
+      starDensity: 1.2,
+      nebulaGlow: 0.85,
+      bloom: 1.35,
+      steps: 220,
+      resScale: 1.0,
+      autoRotate: true,
+      showGrid: false
+    };
+
+    const presets = {
+      interstellar: {
+        mass: 1.0,
+        lensScale: 1.0,
+        ringSharpness: 1.8,
+        rIn: 2.6,
+        rOut: 12.5,
+        spinSpeed: 0.85,
+        turbulence: 1.2,
+        doppler: 1.25,
+        redshift: 0.75,
+        brightness: 1.45,
+        colorTemp: 1.1,
+        starDensity: 1.2,
+        nebulaGlow: 0.85,
+        bloom: 1.35,
+        camDist: 25.0,
+        camTheta: 0.13, // ~7.5 degrees
+        camPhi: 0.25
+      },
+      eht: {
+        mass: 1.35,
+        lensScale: 1.2,
+        ringSharpness: 2.4,
+        rIn: 2.9,
+        rOut: 9.5,
+        spinSpeed: 1.1,
+        turbulence: 1.8,
+        doppler: 2.2,
+        redshift: 1.2,
+        brightness: 1.8,
+        colorTemp: 0.85,
+        starDensity: 0.4,
+        nebulaGlow: 0.2,
+        bloom: 2.1,
+        camDist: 25.0,
+        camTheta: 0.35,
+        camPhi: 0.5
+      },
+      supermassive: {
+        mass: 1.6,
+        lensScale: 1.3,
+        ringSharpness: 1.5,
+        rIn: 3.1,
+        rOut: 17.5,
+        spinSpeed: 0.6,
+        turbulence: 1.5,
+        doppler: 1.0,
+        redshift: 1.3,
+        brightness: 1.6,
+        colorTemp: 0.7,
+        starDensity: 1.8,
+        nebulaGlow: 1.3,
+        bloom: 1.6,
+        camDist: 25.0,
+        camTheta: 0.22,
+        camPhi: -0.3
+      },
+      polar: {
+        mass: 1.0,
+        lensScale: 1.0,
+        ringSharpness: 1.8,
+        rIn: 2.6,
+        rOut: 12.5,
+        spinSpeed: 0.85,
+        turbulence: 1.2,
+        doppler: 1.25,
+        redshift: 0.75,
+        brightness: 1.45,
+        colorTemp: 1.1,
+        starDensity: 1.2,
+        nebulaGlow: 0.85,
+        bloom: 1.35,
+        camDist: 25.0,
+        camTheta: 1.35, // ~77 degrees
+        camPhi: 0.0
+      }
+    };
+
+    // Camera Spherical Coordinate System
+    const camera = {
+      distance: 24.0,
+      theta: 0.13, // Pitch (radians above equatorial plane, Interstellar classic tilt ~7.5 deg)
+      phi: 0.25,   // Yaw
+      target: [0.0, 0.0, 0.0],
+      fov: 52.0
+    };
+
+    // --- Interactive Mouse Orbit Controls ---
+    let isDragging = false;
+    let isRightDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (e.button === 0) isDragging = true;
+      if (e.button === 2) isRightDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      isRightDragging = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging && !isRightDragging) return;
+      const dx = e.clientX - prevMouseX;
+      const dy = e.clientY - prevMouseY;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+
+      if (isDragging) {
+        camera.phi += dx * 0.006;
+        camera.theta += dy * 0.006;
+        camera.theta = Math.max(-Math.PI * 0.48, Math.min(Math.PI * 0.48, camera.theta));
+      } else if (isRightDragging) {
+        camera.distance += dy * 0.08;
+        camera.distance = Math.max(8.0, Math.min(65.0, camera.distance));
+      }
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      camera.distance += e.deltaY * 0.025;
+      camera.distance = Math.max(8.0, Math.min(65.0, camera.distance));
+    }, { passive: false });
+
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        camera.distance = 28.0;
+        camera.theta = 0.13;
+        camera.phi = 0.25;
+      }
+    });
+
+    // --- UI Synchronizer & Event Listeners ---
+    function syncUI() {
+      document.getElementById('param-mass').value = params.mass;
+      document.getElementById('val-mass').innerText = params.mass.toFixed(2);
+
+      document.getElementById('param-lens').value = params.lensScale;
+      document.getElementById('val-lens').innerText = params.lensScale.toFixed(2);
+
+      document.getElementById('param-ring').value = params.ringSharpness;
+      document.getElementById('val-ring').innerText = params.ringSharpness.toFixed(2);
+
+      document.getElementById('param-rin').value = params.rIn;
+      document.getElementById('val-rin').innerText = params.rIn.toFixed(2);
+
+      document.getElementById('param-rout').value = params.rOut;
+      document.getElementById('val-rout').innerText = params.rOut.toFixed(2);
+
+      document.getElementById('param-speed').value = params.spinSpeed;
+      document.getElementById('val-speed').innerText = params.spinSpeed.toFixed(2);
+
+      document.getElementById('param-noise').value = params.turbulence;
+      document.getElementById('val-noise').innerText = params.turbulence.toFixed(2);
+
+      document.getElementById('param-doppler').value = params.doppler;
+      document.getElementById('val-doppler').innerText = params.doppler.toFixed(2);
+
+      document.getElementById('param-redshift').value = params.redshift;
+      document.getElementById('val-redshift').innerText = params.redshift.toFixed(2);
+
+      document.getElementById('param-bright').value = params.brightness;
+      document.getElementById('val-bright').innerText = params.brightness.toFixed(2);
+
+      document.getElementById('param-temp').value = params.colorTemp;
+      document.getElementById('val-temp').innerText = params.colorTemp.toFixed(2);
+
+      document.getElementById('param-stars').value = params.starDensity;
+      document.getElementById('val-stars').innerText = params.starDensity.toFixed(2);
+
+      document.getElementById('param-nebula').value = params.nebulaGlow;
+      document.getElementById('val-nebula').innerText = params.nebulaGlow.toFixed(2);
+
+      document.getElementById('param-bloom').value = params.bloom;
+      document.getElementById('val-bloom').innerText = params.bloom.toFixed(2);
+
+      document.getElementById('param-steps').value = params.steps;
+      document.getElementById('val-steps').innerText = params.steps;
+
+      document.getElementById('param-res').value = params.resScale;
+      document.getElementById('val-res').innerText = params.resScale.toFixed(1) + 'x';
+      document.getElementById('stat-res').innerText = Math.round(params.resScale * 100) + '%';
+
+      document.getElementById('param-autorotate').checked = params.autoRotate;
+      document.getElementById('param-grid').checked = params.showGrid;
+    }
+
+    const sliderBindings = [
+      ['param-mass', 'val-mass', 'mass', 2],
+      ['param-lens', 'val-lens', 'lensScale', 2],
+      ['param-ring', 'val-ring', 'ringSharpness', 2],
+      ['param-rin', 'val-rin', 'rIn', 2],
+      ['param-rout', 'val-rout', 'rOut', 2],
+      ['param-speed', 'val-speed', 'spinSpeed', 2],
+      ['param-noise', 'val-noise', 'turbulence', 2],
+      ['param-doppler', 'val-doppler', 'doppler', 2],
+      ['param-redshift', 'val-redshift', 'redshift', 2],
+      ['param-bright', 'val-bright', 'brightness', 2],
+      ['param-temp', 'val-temp', 'colorTemp', 2],
+      ['param-stars', 'val-stars', 'starDensity', 2],
+      ['param-nebula', 'val-nebula', 'nebulaGlow', 2],
+      ['param-bloom', 'val-bloom', 'bloom', 2],
+      ['param-steps', 'val-steps', 'steps', 0]
+    ];
+
+    sliderBindings.forEach(([elemId, valId, key, dec]) => {
+      const el = document.getElementById(elemId);
+      el.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        params[key] = val;
+        document.getElementById(valId).innerText = dec > 0 ? val.toFixed(dec) : val;
+        clearActivePreset();
+      });
+    });
+
+    document.getElementById('param-res').addEventListener('input', (e) => {
+      params.resScale = parseFloat(e.target.value);
+      document.getElementById('val-res').innerText = params.resScale.toFixed(1) + 'x';
+      document.getElementById('stat-res').innerText = Math.round(params.resScale * 100) + '%';
+      resizeCanvas();
+    });
+
+    document.getElementById('param-autorotate').addEventListener('change', (e) => {
+      params.autoRotate = e.target.checked;
+    });
+
+    document.getElementById('param-grid').addEventListener('change', (e) => {
+      params.showGrid = e.target.checked;
+    });
+
+    // Preset Buttons
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    function clearActivePreset() {
+      presetBtns.forEach(b => b.classList.remove('active'));
+    }
+
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        clearActivePreset();
+        btn.classList.add('active');
+        const pKey = btn.dataset.preset;
+        if (presets[pKey]) {
+          Object.assign(params, presets[pKey]);
+          if (presets[pKey].camDist !== undefined) camera.distance = presets[pKey].camDist;
+          if (presets[pKey].camTheta !== undefined) camera.theta = presets[pKey].camTheta;
+          if (presets[pKey].camPhi !== undefined) camera.phi = presets[pKey].camPhi;
+          syncUI();
+          resizeCanvas();
+        }
+      });
+    });
+
+    // Reset Button
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      Object.assign(params, presets.interstellar);
+      camera.distance = 28.0;
+      camera.theta = 0.13;
+      camera.phi = 0.25;
+      clearActivePreset();
+      document.querySelector('[data-preset="interstellar"]').classList.add('active');
+      syncUI();
+      resizeCanvas();
+    });
+
+    // Fullscreen Toggle
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Sidebar Collapsing
+    const sidebar = document.getElementById('sidebar');
+    const openBtn = document.getElementById('sidebar-open-btn');
+    const closeBtn = document.getElementById('sidebar-close-btn');
+
+    closeBtn.addEventListener('click', () => {
+      sidebar.classList.add('collapsed');
+      openBtn.classList.add('visible');
+    });
+
+    openBtn.addEventListener('click', () => {
+      sidebar.classList.remove('collapsed');
+      openBtn.classList.remove('visible');
+    });
+
+    // --- Resize Handling ---
+    let renderW = 0;
+    let renderH = 0;
+
+    function resizeCanvas() {
+      const displayW = window.innerWidth;
+      const displayH = window.innerHeight;
+      renderW = Math.floor(displayW * params.resScale);
+      renderH = Math.floor(displayH * params.resScale);
+
+      if (canvas.width !== renderW || canvas.height !== renderH) {
+        canvas.width = renderW;
+        canvas.height = renderH;
+        gl.viewport(0, 0, renderW, renderH);
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // --- Main Render Loop & FPS Monitor ---
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let lastFpsUpdate = performance.now();
+    const statFps = document.getElementById('stat-fps');
+    const statTheta = document.getElementById('stat-theta');
+
+    function render(currentTime) {
+      const delta = (currentTime - lastTime) * 0.001;
+      lastTime = currentTime;
+
+      // Auto-orbit camera slowly
+      if (params.autoRotate && !isDragging && !isRightDragging) {
+        camera.phi += delta * 0.035;
+      }
+
+      // Compute camera Cartesian position from Spherical coordinates
+      const cx = camera.distance * Math.cos(camera.theta) * Math.sin(camera.phi);
+      const cy = camera.distance * Math.sin(camera.theta);
+      const cz = camera.distance * Math.cos(camera.theta) * Math.cos(camera.phi);
+
+      // Pass Uniforms
+      gl.uniform2f(u.resolution, renderW, renderH);
+      gl.uniform1f(u.time, currentTime * 0.001);
+      gl.uniform3f(u.cam_pos, cx, cy, cz);
+      gl.uniform3f(u.cam_target, camera.target[0], camera.target[1], camera.target[2]);
+      gl.uniform1f(u.fov, camera.fov);
+
+      gl.uniform1f(u.mass, params.mass);
+      gl.uniform1f(u.lens_scale, params.lensScale);
+      gl.uniform1f(u.ring_sharpness, params.ringSharpness);
+      gl.uniform1f(u.r_in, params.rIn);
+      gl.uniform1f(u.r_out, params.rOut);
+      gl.uniform1f(u.spin_speed, params.spinSpeed);
+      gl.uniform1f(u.turbulence, params.turbulence);
+      gl.uniform1f(u.doppler, params.doppler);
+      gl.uniform1f(u.redshift, params.redshift);
+      gl.uniform1f(u.brightness, params.brightness);
+      gl.uniform1f(u.color_temp, params.colorTemp);
+      gl.uniform1f(u.star_density, params.starDensity);
+      gl.uniform1f(u.nebula_glow, params.nebulaGlow);
+      gl.uniform1f(u.bloom, params.bloom);
+      gl.uniform1i(u.max_steps, params.steps);
+      gl.uniform1i(u.show_grid, params.showGrid ? 1 : 0);
+
+      // Draw screen quad
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      // FPS calculation & HUD update
+      frameCount++;
+      if (currentTime - lastFpsUpdate >= 500) {
+        const fps = Math.round((frameCount * 1000) / (currentTime - lastFpsUpdate));
+        statFps.innerText = fps;
+        frameCount = 0;
+        lastFpsUpdate = currentTime;
+        statTheta.innerText = ((camera.theta * 180) / Math.PI).toFixed(1) + '°';
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    syncUI();
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>
