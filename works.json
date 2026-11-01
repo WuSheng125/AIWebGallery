@@ -2,11 +2,12 @@
   {
     "id": "claude-haiku-5.5-medium",
     "model": "Claude Haiku 5.5",
+    "类别": "claude",
     "effort": "Medium",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 349,
+    "cost": "未记录",
+    "harness": "Claude Desktop",
+    "testDate": "2026/11/02",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -17,6 +18,7 @@
   {
     "id": "claude-opus-5.5-medium",
     "model": "Claude Opus 5.5",
+    "类别": "claude",
     "effort": "Medium",
     "durationSeconds": 2497,
     "cost": "未记录",
@@ -32,11 +34,12 @@
   {
     "id": "claude-sonnet-5.5-medium",
     "model": "Claude Sonnet 5.5",
+    "类别": "claude",
     "effort": "Medium",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 519,
+    "cost": "未记录",
+    "harness": "Claude Desktop",
+    "testDate": "2026/11/02",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -47,6 +50,7 @@
   {
     "id": "deepseek-v41-flash-1017-high",
     "model": "DeepSeek V41 Flash 1017",
+    "类别": "deepseek",
     "effort": "High",
     "durationSeconds": 3436,
     "cost": "2.59 CNY",
@@ -62,6 +66,7 @@
   {
     "id": "deepseek-v41-flash-1017-max",
     "model": "DeepSeek V41 Flash 1017",
+    "类别": "deepseek",
     "effort": "Max",
     "durationSeconds": 3494,
     "cost": "2.07 CNY",
@@ -77,11 +82,12 @@
   {
     "id": "gemini-3.8-flash-high",
     "model": "Gemini 3.8 Flash",
+    "类别": "gemini",
     "effort": "High",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 6514,
+    "cost": "2.40 USD",
+    "harness": "DSH",
+    "testDate": "2026/11/02",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -92,6 +98,7 @@
   {
     "id": "gemini-4-argon-high",
     "model": "Gemini 4 Argon",
+    "类别": "gemini",
     "effort": "High",
     "durationSeconds": 2407,
     "cost": "4.22 USD",
@@ -107,11 +114,12 @@
   {
     "id": "glm-5.3-max",
     "model": "GLM 5.3",
+    "类别": "glm",
     "effort": "Max",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 1315,
+    "cost": "4.66 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/29",
     "stack": [
       "JavaScript",
       "WebGL"
@@ -122,6 +130,7 @@
   {
     "id": "gpt-6-astra-ultra",
     "model": "GPT 6 Astra",
+    "类别": "chatgpt",
     "effort": "Ultra",
     "durationSeconds": 1022,
     "cost": "未记录",
@@ -137,6 +146,7 @@
   {
     "id": "gpt-6.1-sol-ultra",
     "model": "GPT 6.1 Sol",
+    "类别": "chatgpt",
     "effort": "Ultra",
     "durationSeconds": 1237,
     "cost": "未记录",
@@ -152,6 +162,7 @@
   {
     "id": "gpt-6.1-terra-ultra",
     "model": "GPT 6.1 Terra",
+    "类别": "chatgpt",
     "effort": "Ultra",
     "durationSeconds": 523,
     "cost": "未记录",
@@ -167,11 +178,12 @@
   {
     "id": "grok-4.7-xhigh",
     "model": "Grok 4.7",
+    "类别": "grok",
     "effort": "XHigh",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 3834,
+    "cost": "9.84 USD",
+    "harness": "DSH",
+    "testDate": "2026/10/31",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -182,11 +194,12 @@
   {
     "id": "hy4-preview-high",
     "model": "HY4 Preview",
+    "类别": "hunyuan",
     "effort": "High",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 2607,
+    "cost": "2.04 CNY",
+    "harness": "DSH",
+    "testDate": "2026/11/01",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -197,6 +210,7 @@
   {
     "id": "kimi-k3.1-pro-max",
     "model": "Kimi K3.1 Pro",
+    "类别": "kimi",
     "effort": "Max",
     "durationSeconds": 3769,
     "cost": "27.68 CNY",
@@ -213,6 +227,7 @@
   {
     "id": "kimi-k3.1-pro-max-2",
     "model": "Kimi K3.1 Pro",
+    "类别": "kimi",
     "effort": "Max",
     "durationSeconds": 4620,
     "cost": "32.93 CNY",
@@ -229,11 +244,12 @@
   {
     "id": "mimo-v2.6-pro-high",
     "model": "MiMo V2.6 Pro",
+    "类别": "mimo",
     "effort": "High",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 4276,
+    "cost": "1.39 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/31",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -244,11 +260,12 @@
   {
     "id": "minimax-m3-max",
     "model": "MiniMax M3",
+    "类别": "minimax",
     "effort": "Max",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 1474,
+    "cost": "7.82 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/29",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -259,11 +276,12 @@
   {
     "id": "muse-spark-1.3-xhigh",
     "model": "Muse Spark 1.3",
+    "类别": "muse-spark",
     "effort": "XHigh",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 350,
+    "cost": "0.31 USD",
+    "harness": "DSH",
+    "testDate": "2026/10/31",
     "stack": [
       "JavaScript",
       "WebGL"
@@ -274,11 +292,12 @@
   {
     "id": "qwen3.8-max-0902-high",
     "model": "Qwen3.8 Max 0902",
+    "类别": "qwen",
     "effort": "High",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 3873,
+    "cost": "22.22 CNY",
+    "harness": "DSH",
+    "testDate": "2026/10/29",
     "stack": [
       "JavaScript",
       "WebGL 2"
@@ -289,11 +308,12 @@
   {
     "id": "step-5-preview-high",
     "model": "Step 5 Preview",
+    "类别": "step",
     "effort": "High",
-    "durationSeconds": null,
-    "cost": null,
-    "harness": null,
-    "testDate": null,
+    "durationSeconds": 9480,
+    "cost": "33.20 CNY",
+    "harness": "DSH",
+    "testDate": "2026/11/01",
     "stack": [
       "JavaScript",
       "WebGL 2"
