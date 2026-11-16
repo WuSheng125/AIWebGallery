@@ -11,7 +11,7 @@ const output = path.join(root, '_site');
 const galleryAssets = ['index.html', 'gallery.css', 'gallery.js', 'works.json', 'previews', 'assets'];
 const demos = [
   { id: 'claude-haiku-5.5-medium', assets: ['index.html', 'style.css', 'shaders.js', 'main.js'] },
-  { id: 'claude-opus-5.5-medium', assets: ['index.html', 'css', 'js'] },
+  { id: 'claude-opus-5.5-max', assets: ['index.html', 'css', 'js'] },
   { id: 'claude-sonnet-5.5-medium', assets: ['index.html'] },
   { id: 'deepseek-v41-flash-1017-high', assets: ['index.html', 'styles.css', 'app.js'] },
   { id: 'deepseek-v41-flash-1017-max', assets: ['index.html', 'styles.css', 'js'] },

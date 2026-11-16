@@ -16,10 +16,10 @@
     "preview": "previews/claude-haiku-5.5-medium.jpg"
   },
   {
-    "id": "claude-opus-5.5-medium",
+    "id": "claude-opus-5.5-max",
     "model": "Claude Opus 5.5",
     "类别": "claude",
-    "effort": "Medium",
+    "effort": "Max",
     "durationSeconds": 2497,
     "cost": "未记录",
     "harness": "Claude Desktop",
@@ -28,8 +28,8 @@
       "JavaScript",
       "WebGL 2"
     ],
-    "entry": "demos/claude-opus-5.5-medium/index.html",
-    "preview": "previews/claude-opus-5.5-medium.jpg"
+    "entry": "demos/claude-opus-5.5-max/index.html",
+    "preview": "previews/claude-opus-5.5-max.jpg"
   },
   {
     "id": "claude-sonnet-5.5-medium",
