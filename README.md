@@ -1,67 +1,88 @@
-# AI Web Gallery
+# 🌌 AI Web Gallery — 卡冈图雅黑洞生成展馆
 
-首页展示 20 个 AI 生成的卡冈图雅黑洞网页。点击卡片后，在新标签页打开独立原页。
+[![GitHub Pages](https://img.shields.io/badge/Live_Demo-GitHub_Pages-ffb23f?style=flat-square&logo=github)](https://wusheng125.github.io/AIWebGallery/)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22.12.0-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
-## 本地使用
+**AI Web Gallery** 是一个横向展示与对比不同大语言模型（LLM）及编程智能体（Coding Harness）Web 图形编程能力的交互式作品集。所有收录作品均基于**同一段自然语言提示词**，独立生成电影《星际穿越》（*Interstellar*）中超大质量黑洞**「卡冈图雅」（Gargantua）**的实时三维渲染网页。
 
-使用 Node.js 22.12 或更高版本，在项目根目录执行：
+点击展馆首页的任意作品卡片，即可在新标签页中打开该模型生成的独立交互页面，亲自体验光线追踪引力透镜、相对论吸积盘与实时物理参数调节。
+
+---
+
+## 🎯 测试基准与统一提示词
+
+所有模型均在零人工手写前端代码的条件下，基于以下提示词完成开发：
+
+> 在当前目录下，使用web技术制作一个图形化预览黑洞效果的网页，要求外观和样式要类似于电影《星际穿越》里面的黑洞卡冈图雅。黑洞背景要有其他星星，黑洞要有跟电影里类似的吸积盘效果和引力透镜效应。用户可以用鼠标旋转观察，并且在侧边栏可以调整相关参数体现不同参数黑洞的不同效果。你可以使用你认为必要的技术来实现这个网页，既要保证性能也要完成必要的效果。可以引入你觉得必要的第三方图形库比如three.js等等之类。
+
+*注：本项目为娱乐与技术探索性质测试，展示结果仅代表对应模型在当时测试环境与工具链下的单次表现。*
+
+---
+
+## ✨ 展馆特性
+
+- **多模型同台竞技**：涵盖 Claude、DeepSeek、Gemini、ChatGPT、Grok、混元（Hunyuan）、Kimi、MiMo、MiniMax、Muse Spark、Qwen、Step 等主流模型系列。
+- **多维元数据看板**：每张作品卡片直观呈现**模型名称与推理强度（Effort）**、**实际耗时**、**API / 运行费用**、**使用的智能体工具（Harness）**、**测试日期**以及**技术栈标签**（WebGL 2、GLSL、Three.js、TypeScript、Vite 等）。
+- **丝滑多选筛选**：支持按模型系列进行组合筛选（附带自适应过渡动画），快速对比同一家族不同档位或跨家族模型的视觉实现。
+- **原汁原味独立运行**：所有作品均保存了完备的静态运行产物，点击卡片直接进入原作环境，互不干扰。
+
+---
+
+## 🚀 本地运行与预览
+
+展馆本身采用纯静态架构，构建与预览脚本完全基于 Node.js 原生模块，无需安装额外第三方运行时依赖。
+
+### 环境要求
+
+- **Node.js**：`>= 22.12.0`
+
+### 启动步骤
+
+在项目根目录下执行：
 
 ```powershell
+# 1. 将首页与各作品的静态发布资源组装至 _site/ 目录
 npm run build
+
+# 2. 启动本地静态预览服务器
 npm run serve
 ```
 
-打开 [本地入口](http://127.0.0.1:4173/AIWebGallery/)。构建只将已保存的静态产物组装到 `_site/`；预览服务仅提供该目录，使用 `/AIWebGallery/` 子路径。修改入口、卡片数据或封面后，重新执行 `npm run build` 并刷新页面。每次构建会替换 `_site/`。
+服务启动后，在浏览器访问 **[http://127.0.0.1:4173/AIWebGallery/](http://127.0.0.1:4173/AIWebGallery/)** 即可浏览展馆。
 
-端口可通过 PowerShell 的 `$env:PORT = '4174'` 调整；`npm run preview` 与 `npm run serve` 相同。
+- **修改与刷新**：修改首页文件、`works.json` 或封面图后，重新执行 `npm run build` 并刷新浏览器页面即可生效（每次构建会自动清空并重建 `_site/`）。
+- **自定义端口**：默认端口为 `4173`。如需修改，可在运行前设置环境变量（例如 PowerShell 中执行 `$env:PORT = '4174'; npm run serve`）。`npm run preview` 与 `npm run serve` 功能完全一致。
 
-## 文件
+---
 
-| 位置 | 用途 |
-| --- | --- |
-| `index.html`、`gallery.css`、`gallery.js` | 首页结构、提示词与声明、样式和卡片展示 |
-| `assets/` | 首页背景图片、站标和模型系列图标 |
-| `works.json` | 卡片信息、元数据、封面及原页地址 |
-| `previews/` | 首页封面（1280*800）的统一存放目录 |
-| `works/<id>/` | 各原作的文件与已保存静态产物 |
-| `_site/` | 构建生成的发布目录 |
-| `scripts/build-gallery.mjs` | 组装入口、封面与原页 |
-| `scripts/serve.mjs` | 本地预览服务 |
-| `.github/workflows/pages.yml` | GitHub Pages 发布工作流 |
+## 📂 目录结构概览
 
-原作集中存放在 `works/`，发布地址保持 `demos/<id>/index.html`，`works.json` 的 `entry` 仍使用该地址。
+```text
+AIWebGallery/
+├── index.html                 # 展馆首页结构（提示词面板、筛选栏、作品网格）
+├── gallery.css                # 展馆深空琥珀主题样式与响应式布局
+├── gallery.js                 # 作品数据校验、系列筛选、FLIP 动画与卡片渲染
+├── works.json                 # 收录作品的元数据清单
+├── assets/                    # 展馆公共资源（星空背景、站标及 assets/models/ 下的模型图标）
+├── previews/                  # 统一规格（1280×800）的作品首页封面图
+├── works/<id>/                # 各模型生成的原作源码及已固化的静态产物
+├── tmp/                       # 待整理入库的候选作品暂存区（不参与构建发布）
+├── scripts/
+│   ├── build-gallery.mjs      # 静态站点组装脚本（白名单复制，输出至 _site/）
+│   └── serve.mjs              # 本地安全预览服务（模拟 /AIWebGallery/ 子路径）
+├── .github/workflows/
+│   └── pages.yml              # GitHub Pages 自动构建与部署工作流
+└── AGENTS.md                  # 面向 AI 智能体的项目架构说明与新作品入库指南
+```
 
-## 卡片数据
+> 🤖 **给开发者与 AI 助手**：如需了解项目底层校验规则、构建映射机制，或需要将新测试的作品（如 `tmp/` 目录下的作品）加入展馆，请查阅 **[AGENTS.md](./AGENTS.md)**。
 
-在 `works.json` 中填写卡片信息：
+---
 
-| 字段 | 填写方式 |
-| --- | --- |
-| `id` | 作品唯一标识，对应 `works/` 下的目录名 |
-| `model` | 模型展示名称 |
-| `类别` | 模型系列的小写英文标识，如 GPT 使用 `chatgpt`、Claude 使用 `claude`；首页据此生成模型系列筛选项 |
-| `effort` | 推理强度或档位标签 |
-| `stack` | 技术栈字符串数组 |
-| `entry` | 原页地址：`demos/<id>/index.html` |
-| `preview` | 封面地址：`previews/<id>.jpg`，截图统一使用 1280×800 分辨率 |
-| `durationSeconds` | 实际耗时，非负数字，单位为秒，可含小数；未知填 `null` |
-| `cost` | 实际费用，可直接填写文本（如 `"2.59 CNY"`、`"未记录"`）或费用对象；未知填 `null` |
-| `harness` | 实际使用的工具或运行环境名称，字符串；未知填 `null` |
-| `testDate` | 测试日期，填写 `YYYY-MM-DD` 或 `YYYY/MM/DD`，卡片统一显示为 `YYYY/MM/DD`；未知填 `null` |
+## 🌐 部署到 GitHub Pages
 
-费用对象由非负数字 `amount` 和 ISO 4217 三字母货币代码 `currency` 组成。例如 `{"amount": 0, "currency": "USD"}` 仅表示填写格式，不是现有作品的实际费用。
+本项目原生适配 GitHub Pages 子路径部署（如 `https://<username>.github.io/AIWebGallery/`），全站采用相对路径引用资源。
 
-各项信息按实际记录填写。缺失值显示 `—`（未提供）；`0` 秒和零费用都是有效记录，会正常显示。费用保留填写的文本或币种，不自动换算。测试日期不包含时区，不会随浏览者所在地区改变。
-
-提示词与作品列表之间的模型系列筛选支持多选，展示所选系列的全部作品。点击“全部”会清空系列选择，取消最后一个系列后会自动恢复“全部”。模型图标保存在 `assets/models/`。
-
-## GitHub Pages
-
-1. 将项目提交到 GitHub 仓库的 `main` 分支。
-2. 在仓库 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
-3. 推送 `main`，或在 **Actions** 中手动运行 **Publish gallery to GitHub Pages**。
-4. 工作流组装 `_site/`、上传发布产物并部署。完成后，从部署结果打开站点地址。
-
-仓库名为 `AIWebGallery` 时，项目站点地址通常为 `https://<账号>.github.io/AIWebGallery/`，以实际部署输出为准。静态资源使用相对路径，可适配仓库子路径。
-
-发布流程使用 `github-pages` environment，按仓库设置处理审批或分支限制。详见 [GitHub Pages 官方说明](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)。
+1. 将代码推送到 GitHub 仓库的 `main` 分支。
+2. 进入仓库 **Settings → Pages → Build and deployment → Source**，选择 **GitHub Actions**。
+3. 每次推送到 `main` 分支（或在 **Actions** 页面手动触发 **Publish gallery to GitHub Pages** 工作流），GitHub Actions 会自动执行 `npm run build` 并将生成的 `_site/` 目录发布上线。
