@@ -24,6 +24,8 @@ const demos = [
   { id: 'gpt-6-astra-ultra', assets: ['index.html', 'style.css', 'renderer.js', 'app.js'] },
   { id: 'gpt-6.1-sol-ultra', assets: [{ source: 'gargantua.html', target: 'index.html' }] },
   { id: 'gpt-6.1-terra-ultra', assets: ['index.html', 'style.css', 'blackhole.js', 'app.js'] },
+  { id: 'gpt-6.2-astra-max', assets: ['index.html', 'styles.css', 'optics.js', 'renderer.js', 'app.js', 'assets'] },
+  { id: 'gpt-6.2-sol-max', assets: ['index.html', 'observatory.css', 'renderer.js', 'observatory.js'] },
   { id: 'grok-4.7-xhigh', assets: ['index.html', 'style.css', 'app.js'] },
   { id: 'hy4-high', assets: ['index.html', 'css', 'js'] },
   { id: 'hy4-preview-high', assets: ['index.html', 'css', 'js'] },

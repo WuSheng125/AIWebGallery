@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090b11">
+    <meta name="description" content="在交互式观测台探索卡冈图雅的吸积盘与引力透镜。">
+    <title>卡冈图雅 · 黑洞观测台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230c0f17'/%3E%3Cg fill='none' stroke='%23ffc487' stroke-width='1.4'%3E%3Ccircle cx='20' cy='20' r='11'/%3E%3Cellipse cx='20' cy='20' rx='17' ry='4' transform='rotate(-24 20 20)'/%3E%3C/g%3E%3C/svg%3E">
+    <link rel="stylesheet" href="observatory.css">
+    <script defer src="renderer.js"></script>
+    <script defer src="observatory.js"></script>
+  </head>
+  <body>
+    <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="icon-expand" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5m0 6v5h-5m-6 0H4v-5"/></symbol>
+      <symbol id="icon-shrink" viewBox="0 0 24 24"><path d="M4 9h5V4m6 0v5h5m0 6h-5v5m-6 0v-5H4"/></symbol>
+      <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2.1 6M4 5v6h6"/></symbol>
+      <symbol id="icon-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M9 5v14m6-14v14"/></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path d="m9 5 10 7-10 7z"/></symbol>
+      <symbol id="icon-mouse" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5m0-8h.01"/></symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"/></symbol>
+    </svg>
+
+    <div class="shell" id="observatory">
+      <header class="masthead">
+        <div class="signature">
+          <span class="orbit-mark" aria-hidden="true"></span>
+          <div class="wordmark">
+            <span lang="en">GARGANTUA</span>
+            <span class="wordmark-caption">黑洞观测台</span>
+          </div>
+        </div>
+        <div class="masthead-actions">
+          <span class="live-status" id="render-status" data-state="loading" role="status">
+            <span class="status-light" aria-hidden="true"></span><span id="render-status-text">初始化</span>
+          </span>
+          <button class="button fullscreen-button" id="fullscreen" type="button" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#icon-expand"/></svg><span>全屏</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="viewer" aria-labelledby="object-name">
+          <div class="stage" id="stage">
+            <canvas id="space" tabindex="0" aria-label="黑洞交互视图" aria-describedby="view-help"></canvas>
+            <div class="stage-shade" aria-hidden="true"></div>
+            <div class="viewfinder" aria-hidden="true"></div>
+            <div class="stage-title">
+              <h1 id="object-name">卡冈图雅</h1>
+              <p>吸积盘与引力透镜</p>
+            </div>
+            <p class="view-help" id="view-help">
+              <svg class="icon" aria-hidden="true"><use href="#icon-mouse"/></svg>
+              <span class="mouse-help">拖动旋转 <span>·</span> 滚轮缩放</span>
+              <span class="touch-help">单指旋转 <span>·</span> 双指缩放</span>
+              <span class="visually-hidden">键盘方向键旋转，加号和减号缩放，空格控制动画。</span>
+            </p>
+            <div class="view-message" id="view-message" role="status">正在计算光线路径…</div>
+            <noscript>
+              <style>#view-message { display: none; }</style>
+              <div class="view-message">启用 JavaScript 后即可渲染黑洞。</div>
+            </noscript>
+          </div>
+
+          <div class="view-toolbar" aria-label="观测控制">
+            <div class="view-actions">
+              <button class="button toolbar-button" id="playback" type="button" disabled>
+                <svg class="icon" aria-hidden="true"><use href="#icon-pause"/></svg><span>暂停</span>
+              </button>
+              <button class="button toolbar-button" id="recenter" type="button" title="恢复当前预设的初始视角">
+                <svg class="icon" aria-hidden="true"><use href="#icon-focus"/></svg><span>视角归位</span>
+              </button>
+            </div>
+            <dl class="view-readouts">
+              <div><dt>方位</dt><dd id="azimuth">016°</dd></div>
+              <div><dt>仰角</dt><dd id="elevation">+08°</dd></div>
+              <div><dt>缩放</dt><dd id="zoom">1.00×</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <aside class="controls" aria-labelledby="control-title">
+          <div class="controls-heading">
+            <h2 id="control-title">参数控制</h2>
+            <button class="button reset-button" id="reset" type="button" title="恢复默认参数和视角">
+              <svg class="icon" aria-hidden="true"><use href="#icon-reset"/></svg><span>重置</span>
+            </button>
+          </div>
+
+          <div class="control-section presets-section">
+            <h3 id="presets-label">观察预设</h3>
+            <div class="presets" role="group" aria-labelledby="presets-label">
+              <button type="button" data-preset="cinema" aria-pressed="true">电影视角</button>
+              <button type="button" data-preset="overhead" aria-pressed="false">盘面俯瞰</button>
+              <button type="button" data-preset="rapid" aria-pressed="false">高速自旋</button>
+            </div>
+          </div>
+
+          <div class="control-section" role="group" aria-labelledby="gravity-label">
+            <h3 id="gravity-label">黑洞</h3>
+            <div class="parameter">
+              <div class="parameter-heading">
+                <label for="mass">相对质量</label><output id="mass-value" for="mass">1.00×</output>
+              </div>
+              <input id="mass" data-param="mass" type="range" min="0.55" max="1.65" step="0.01" value="1">
+            </div>
+            <div class="parameter">
+              <div class="parameter-heading">
+                <label for="spin">自旋系数</label><output id="spin-value" for="spin">0.58</output>
+              </div>
+              <input id="spin" data-param="spin" type="range" min="0" max="0.98" step="0.01" value="0.58">
+            </div>
+            <label class="switch-row" title="切换星光偏折与吸积盘的多重像">
+              <span>引力透镜</span>
+              <input data-param="lensing" type="checkbox" role="switch" checked>
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <div class="control-section" role="group" aria-labelledby="disk-label">
+            <h3 id="disk-label">吸积盘</h3>
+            <div class="parameter">
+              <div class="parameter-heading">
+                <label for="outer">外缘半径</label><output id="outer-value" for="outer"><span>16.8</span> <i>r<sub>g</sub></i></output>
+              </div>
+              <input id="outer" data-param="outer" type="range" min="9" max="24" step="0.1" value="16.8">
+            </div>
+            <div class="parameter">
+              <div class="parameter-heading">
+                <label for="temperature">色温</label><output id="temperature-value" for="temperature">6,200 K</output>
+              </div>
+              <input id="temperature" data-param="temperature" type="range" min="2500" max="15000" step="100" value="6200">
+            </div>
+            <div class="parameter">
+              <div class="parameter-heading">
+                <label for="intensity">发光强度</label><output id="intensity-value" for="intensity">1.25×</output>
+              </div>
+              <input id="intensity" data-param="intensity" type="range" min="0.25" max="2.5" step="0.05" value="1.25">
+            </div>
+            <label class="switch-row" title="突出向观测者运动的一侧盘面">
+              <span>多普勒增亮</span>
+              <input data-param="doppler" type="checkbox" role="switch">
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <div class="control-section render-settings">
+            <div class="quality-row">
+              <label for="quality">渲染质量</label>
+              <div class="select-wrap">
+                <select id="quality">
+                  <option value="auto">自动</option>
+                  <option value="high">高清</option>
+                  <option value="balanced">均衡</option>
+                  <option value="low">省电</option>
+                </select>
+                <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg>
+              </div>
+            </div>
+            <details class="render-info">
+              <summary><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg>渲染说明</summary>
+              <p>吸积盘光路基于史瓦西时空，星光弯折与自旋效应采用视觉近似。<i>r<sub>g</sub></i> 表示引力半径。</p>
+              <p>电影视觉参考 <a href="https://arxiv.org/abs/1502.03808" target="_blank" rel="noopener noreferrer">《星际穿越》引力透镜论文</a>。</p>
+            </details>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

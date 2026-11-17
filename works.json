@@ -227,6 +227,38 @@
     "preview": "previews/gpt-6.1-terra-ultra.jpg"
   },
   {
+    "id": "gpt-6.2-astra-max",
+    "model": "GPT 6.2 Astra",
+    "类别": "chatgpt",
+    "effort": "Max",
+    "durationSeconds": 2974,
+    "cost": "未记录",
+    "harness": "Codex",
+    "testDate": "2026/11/18",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/gpt-6.2-astra-max/index.html",
+    "preview": "previews/gpt-6.2-astra-max.jpg"
+  },
+  {
+    "id": "gpt-6.2-sol-max",
+    "model": "GPT 6.2 Sol",
+    "类别": "chatgpt",
+    "effort": "Max",
+    "durationSeconds": 1159,
+    "cost": "未记录",
+    "harness": "Codex",
+    "testDate": "2026/11/18",
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/gpt-6.2-sol-max/index.html",
+    "preview": "previews/gpt-6.2-sol-max.jpg"
+  },
+  {
     "id": "grok-4.7-xhigh",
     "model": "Grok 4.7",
     "类别": "grok",
