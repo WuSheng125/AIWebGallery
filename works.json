@@ -1,5 +1,21 @@
 [
   {
+    "id": "claude-fable-5.2-extra",
+    "model": "Claude Fable 5.2",
+    "类别": "claude",
+    "effort": "Extra",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/claude-fable-5.2-extra/index.html",
+    "preview": "previews/claude-fable-5.2-extra.jpg"
+  },
+  {
     "id": "claude-haiku-5.5-medium",
     "model": "Claude Haiku 5.5",
     "类别": "claude",
@@ -112,6 +128,41 @@
     "preview": "previews/gemini-4-argon-high.jpg"
   },
   {
+    "id": "gemini-4-carbon-high",
+    "model": "Gemini 4 Carbon",
+    "类别": "gemini",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "React",
+      "TypeScript",
+      "Three.js",
+      "Vite"
+    ],
+    "entry": "demos/gemini-4-carbon-high/index.html",
+    "preview": "previews/gemini-4-carbon-high.jpg"
+  },
+  {
+    "id": "gemini-4-hydrogen-xhigh",
+    "model": "Gemini 4 Hydrogen",
+    "类别": "gemini",
+    "effort": "XHigh",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "Three.js",
+      "Vite"
+    ],
+    "entry": "demos/gemini-4-hydrogen-xhigh/index.html",
+    "preview": "previews/gemini-4-hydrogen-xhigh.jpg"
+  },
+  {
     "id": "glm-5.3-max",
     "model": "GLM 5.3",
     "类别": "glm",
@@ -190,6 +241,22 @@
     ],
     "entry": "demos/grok-4.7-xhigh/index.html",
     "preview": "previews/grok-4.7-xhigh.jpg"
+  },
+  {
+    "id": "hy4-high",
+    "model": "HY4",
+    "类别": "hunyuan",
+    "effort": "High",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/hy4-high/index.html",
+    "preview": "previews/hy4-high.jpg"
   },
   {
     "id": "hy4-preview-high",
@@ -304,6 +371,38 @@
     ],
     "entry": "demos/qwen3.8-max-0902-high/index.html",
     "preview": "previews/qwen3.8-max-0902-high.jpg"
+  },
+  {
+    "id": "qwen4-max-preview-xhigh",
+    "model": "Qwen4 Max Preview",
+    "类别": "qwen",
+    "effort": "XHigh",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "Three.js",
+      "GLSL"
+    ],
+    "entry": "demos/qwen4-max-preview-xhigh/index.html",
+    "preview": "previews/qwen4-max-preview-xhigh.jpg"
+  },
+  {
+    "id": "qwen4-max-xhigh",
+    "model": "Qwen4 Max",
+    "类别": "qwen",
+    "effort": "XHigh",
+    "durationSeconds": null,
+    "cost": null,
+    "harness": null,
+    "testDate": null,
+    "stack": [
+      "JavaScript",
+      "WebGL 2"
+    ],
+    "entry": "demos/qwen4-max-xhigh/index.html",
+    "preview": "previews/qwen4-max-xhigh.jpg"
   },
   {
     "id": "step-5-preview-high",

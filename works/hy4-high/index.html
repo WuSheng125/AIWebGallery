@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GARGANTUA · 卡冈图雅 | 交互式黑洞模拟</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="view" aria-label="黑洞实时渲染画布"></canvas>
+
+<!-- ── top-left heads-up display ───────────────────────────────────────── -->
+<div id="hud" class="hud">
+  <div class="hud-title">
+    <span class="hud-mark"></span>
+    <div>
+      <h1>GARGANTUA <em>卡冈图雅</em></h1>
+      <p>INTERSTELLAR · GENERAL RELATIVISTIC BLACK HOLE SIMULATOR</p>
+    </div>
+  </div>
+  <div class="hud-telemetry">
+    <div><span>FPS</span><b id="t-fps">--</b></div>
+    <div><span>渲染分辨率</span><b id="t-res">--</b></div>
+    <div><span>观测倾角</span><b id="t-inc">--</b></div>
+    <div><span>观测距离</span><b id="t-dist">--</b></div>
+  </div>
+</div>
+
+<!-- ── bottom hints ───────────────────────────────────────────────────── -->
+<div id="hints" class="hints">
+  <span><kbd>拖拽</kbd> 旋转视角</span>
+  <span><kbd>滚轮</kbd> 缩放距离</span>
+  <span><kbd>双击</kbd> 复位视角</span>
+  <span><kbd>H</kbd> 隐藏 / 显示面板</span>
+</div>
+
+<!-- ── control sidebar ────────────────────────────────────────────────── -->
+<button id="panelToggle" class="panel-toggle" title="显示 / 隐藏控制面板 (H)" aria-label="切换面板">☰</button>
+
+<aside id="panel" class="panel">
+  <header class="panel-head">
+    <div class="panel-head-icon">◉</div>
+    <div class="panel-head-text">
+      <h2>物理与视觉参数控制台</h2>
+      <p>RELATIVITY &amp; RENDER CONTROLS</p>
+    </div>
+    <button id="panelClose" class="icon-btn" title="收起面板" aria-label="收起面板">✕</button>
+  </header>
+
+  <div class="panel-body">
+    <section class="preset-section">
+      <div class="section-label"><span>01</span> 预设方案 <em>PRESETS</em></div>
+      <div id="presets" class="presets"></div>
+    </section>
+    <div id="controls"></div>
+
+    <section class="about">
+      <div class="section-label"><span>07</span> 关于 <em>ABOUT</em></div>
+      <p>基于 Schwarzschild 度规的<strong>零测地线积分</strong>实时求解引力透镜：光线弯曲 Δφ = 2r<sub>s</sub>/b、光子球 1.5r<sub>s</sub>、黑洞阴影 2.598r<sub>s</sub>。吸积盘采用开普勒差动旋转 + 相对论多普勒集束，背景星光在弯曲后的方向上重新采样。</p>
+    </section>
+  </div>
+
+  <footer class="panel-foot">
+    <button id="btnReset" class="btn">↺ 重置参数</button>
+    <button id="btnShot" class="btn">▣ 保存截图</button>
+    <button id="btnFull" class="btn">⛶ 全屏</button>
+  </footer>
+</aside>
+
+<div id="loading" class="loading"><div class="spinner"></div><p>初始化时空曲率…</p></div>
+<div id="fatal" class="fatal" hidden></div>
+
+<script src="js/shaders.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

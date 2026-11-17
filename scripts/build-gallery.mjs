@@ -10,6 +10,7 @@ const output = path.join(root, '_site');
 // dependencies, and historical development scripts stay in the original folders.
 const galleryAssets = ['index.html', 'gallery.css', 'gallery.js', 'works.json', 'previews', 'assets'];
 const demos = [
+  { id: 'claude-fable-5.2-extra', assets: ['index.html'] },
   { id: 'claude-haiku-5.5-medium', assets: ['index.html', 'style.css', 'shaders.js', 'main.js'] },
   { id: 'claude-opus-5.5-max', assets: ['index.html', 'css', 'js'] },
   { id: 'claude-sonnet-5.5-medium', assets: ['index.html'] },
@@ -17,11 +18,14 @@ const demos = [
   { id: 'deepseek-v41-flash-1017-max', assets: ['index.html', 'styles.css', 'js'] },
   { id: 'gemini-3.8-flash-high', assets: ['index.html'] },
   { id: 'gemini-4-argon-high', assets: ['index.html', 'styles.css', 'js', 'vendor/three.min.js'] },
+  { id: 'gemini-4-carbon-high', directory: 'dist' },
+  { id: 'gemini-4-hydrogen-xhigh', directory: 'dist' },
   { id: 'glm-5.3-max', assets: ['index.html', 'css', 'js'] },
   { id: 'gpt-6-astra-ultra', assets: ['index.html', 'style.css', 'renderer.js', 'app.js'] },
   { id: 'gpt-6.1-sol-ultra', assets: [{ source: 'gargantua.html', target: 'index.html' }] },
   { id: 'gpt-6.1-terra-ultra', assets: ['index.html', 'style.css', 'blackhole.js', 'app.js'] },
   { id: 'grok-4.7-xhigh', assets: ['index.html', 'style.css', 'app.js'] },
+  { id: 'hy4-high', assets: ['index.html', 'css', 'js'] },
   { id: 'hy4-preview-high', assets: ['index.html', 'css', 'js'] },
   { id: 'kimi-k3.1-pro-max', directory: 'dist' },
   { id: 'kimi-k3.1-pro-max-2', directory: 'dist' },
@@ -29,6 +33,8 @@ const demos = [
   { id: 'minimax-m3-max', assets: ['index.html', 'css', 'js'] },
   { id: 'muse-spark-1.3-xhigh', assets: ['index.html'] },
   { id: 'qwen3.8-max-0902-high', assets: ['index.html', 'css', 'js'] },
+  { id: 'qwen4-max-preview-xhigh', assets: ['index.html', 'css', 'js', 'vendor/three.min.js'] },
+  { id: 'qwen4-max-xhigh', assets: ['index.html', 'css', 'js'] },
   { id: 'step-5-preview-high', assets: ['index.html', 'css', 'js', 'shaders'] },
 ];
 

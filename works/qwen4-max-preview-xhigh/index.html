@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>卡冈图雅 · GARGANTUA — 黑洞实时引力透镜模拟</title>
+<meta name="description" content="在浏览器中实时渲染《星际穿越》卡冈图雅黑洞：史瓦西测地线光线追踪、吸积盘、引力透镜、多普勒束流，可交互调整全部物理参数。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060c'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='8' fill='none' stroke='%23ffb454' stroke-width='3' transform='rotate(-18 32 32)'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23000' stroke='%23ff8a3d' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════ 渲染视口 ══════════ -->
+  <canvas id="scene" aria-label="黑洞实时渲染视口：拖拽旋转，滚轮缩放"></canvas>
+
+  <!-- 电影取景框角标 -->
+  <div class="corners" aria-hidden="true">
+    <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+  </div>
+
+  <!-- ══════════ 顶栏 ══════════ -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="bm-ring"></span><span class="bm-disk"></span><span class="bm-core"></span>
+      </div>
+      <div class="brand-text">
+        <h1>卡冈图雅 <span class="en">GARGANTUA</span></h1>
+        <p class="tagline">史瓦西时空 · 实时测地线光线追踪</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="btnSound" class="icon-btn on" type="button" aria-pressed="true" title="环境音：开（点击静音）" aria-label="环境音开关">
+        <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+      </button>
+      <button id="btnPause" class="icon-btn" type="button" aria-pressed="false" title="暂停吸积盘（空格）" aria-label="暂停或继续吸积盘动画">
+        <svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg>
+        <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none" hidden><path d="M7 4.5v15l13-7.5z"/></svg>
+      </button>
+      <button id="btnShot" class="icon-btn" type="button" title="导出 PNG 截图（S）" aria-label="导出截图">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+      <button id="btnFull" class="icon-btn" type="button" title="全屏（F）" aria-label="切换全屏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+      <button id="btnHide" class="icon-btn" type="button" title="隐藏界面，纯净观影（H）" aria-label="隐藏界面">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端参数面板开关 -->
+  <button id="sidebarToggle" type="button" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.2" fill="var(--panel-solid)"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.2" fill="var(--panel-solid)"/></svg>
+    观测参数
+  </button>
+
+  <!-- ══════════ 侧边栏：观测参数 ══════════ -->
+  <aside id="sidebar" aria-label="观测参数面板">
+    <div class="sidebar-head">
+      <div>
+        <span class="en">OBSERVATION DECK</span>
+        <h2>观测参数</h2>
+      </div>
+      <button id="sidebarClose" class="icon-btn small" type="button" aria-label="收起参数面板">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="sidebar-scroll" id="sidebarScroll">
+
+      <section class="group">
+        <header class="group-head"><span class="en">PRESETS</span><h3>预设场景</h3></header>
+        <div class="preset-grid" id="presetGrid"><!-- JS 生成 --></div>
+        <p class="preset-desc" id="presetDesc"></p>
+      </section>
+
+      <div id="controls"><!-- JS 生成：时空几何 / 吸积盘 / 深空环境 / 渲染管线 / 相机与时间 --></div>
+
+      <section class="group">
+        <header class="group-head"><span class="en">ACTIONS</span><h3>操作</h3></header>
+        <div class="action-row">
+          <button id="btnReset" class="action-btn" type="button" title="恢复卡冈图雅默认参数与视角">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            重置
+          </button>
+          <button id="btnRandom" class="action-btn" type="button" title="随机生成一颗黑洞">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/></svg>
+            随机
+          </button>
+          <button id="btnExport" class="action-btn primary" type="button" title="将当前画面导出为 PNG">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导出
+          </button>
+        </div>
+      </section>
+
+      <footer class="sidebar-foot">
+        基于史瓦西度规的零测地线数值积分 · 相对论光度模型<br>
+        艺术化实时演绎，非科研级精度 · WebGL / three.js
+      </footer>
+    </div>
+  </aside>
+
+  <!-- ══════════ 左下：物理量 HUD ══════════ -->
+  <div id="hud" aria-label="物理量读数">
+    <div class="hud-title">TELEMETRY <span>遥测</span></div>
+    <div class="hud-row"><span class="k">质量 M</span><span class="v" id="hudMass">—</span></div>
+    <div class="hud-row"><span class="k">史瓦西半径 rₛ</span><span class="v" id="hudRs">—</span></div>
+    <div class="hud-row"><span class="k">相机距离</span><span class="v" id="hudDist">—</span></div>
+    <div class="hud-row"><span class="k">轨道倾角</span><span class="v" id="hudIncl">—</span></div>
+    <div class="hud-row"><span class="k">帧率 / 分辨率</span><span class="v" id="hudFps">—</span></div>
+    <button id="btnAbout" type="button" title="了解渲染背后的广义相对论">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      原理与幕后
+    </button>
+  </div>
+
+  <!-- 右下操作提示 -->
+  <div id="hint">
+    <span>拖拽 旋转</span><i>·</i><span>滚轮 缩放</span><i>·</i><span>双击 复位</span><i>·</i>
+    <span><kbd>空格</kbd> 暂停</span><i>·</i><span><kbd>H</kbd> 隐藏界面</span>
+  </div>
+
+  <!-- 隐藏界面后的恢复按钮 -->
+  <button id="restoreUI" type="button">显示界面 <kbd>H</kbd></button>
+
+  <!-- 提示气泡 -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ══════════ 原理弹窗 ══════════ -->
+  <div id="aboutModal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button class="icon-btn modal-close" type="button" data-close aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+      <span class="en modal-en">THE PHYSICS OF GARGANTUA</span>
+      <h2 id="aboutTitle">原理与幕后</h2>
+
+      <h3>① 事件视界与黑洞阴影</h3>
+      <p>史瓦西半径 <code>rₛ = 2GM/c²</code> 是光也无法逃脱的边界。由于光子捕获截面，远处观测者看到的黑色「阴影」直径约为 <code>2.6 rₛ</code>，比视界本身更大——画面中央的纯黑圆盘正是它。</p>
+
+      <h3>② 光子球与光子环</h3>
+      <p>在 <code>1.5 rₛ</code> 处，光子可以沿不稳定的圆轨道绕黑洞运行。掠过临界距离的光线绕行一圈甚至数圈后逃逸，在阴影边缘形成一圈极细的亮环（光子环），并把吸积盘复制成无穷级次的嵌套像。</p>
+
+      <h3>③ 吸积盘</h3>
+      <p>采用薄盘模型：温度 <code>T(r) ∝ r⁻³ᐟ⁴</code>，内缘取最内稳定圆轨道 <code>ISCO = 3 rₛ</code>。物质以开普勒速度 <code>ω ∝ r⁻³ᐟ²</code> 差速旋转，剪切出电影中丝缕状的湍流条纹；颜色由黑体辐射温度实时映射。</p>
+
+      <h3>④ 引力透镜</h3>
+      <div class="formula-block">d²u/dφ² + u = (3/2) · rₛ · u²</div>
+      <p>这是史瓦西时空中光线的轨道方程。本页面对每个像素数值积分这条测地线：吸积盘远端发出的光被弯折到黑洞上方与下方，形成《星际穿越》标志性的「光环包裹」形态；背景恒星与星云同样被扭曲成弧线和爱因斯坦环。把「引力透镜强度」调到 0，即可对比平直时空的样子。</p>
+
+      <h3>⑤ 多普勒束流与引力红移</h3>
+      <p>盘物质以接近光速运动：朝向观测者的一侧被相对论性束流增亮 <code>δ³</code> 倍并蓝移，远离的一侧变暗变红，其中 <code>δ = 1/[γ(1−β·cosθ)]</code>。引力红移因子 <code>g = √(1−rₛ/r)</code> 又让内缘整体变暗偏红。电影为了美学刻意弱化了左右不对称，本模拟默认亦如此；拉高「多普勒束流」即可还原 M87* 照片那样的真实物理形态。</p>
+
+      <h3>⑥ 幕后</h3>
+      <p>2014 年《星际穿越》中，诺贝尔奖得主基普·索恩提供广义相对论方程，特效公司 Double Negative 据此开发了 DNGR 渲染器，单帧 IMAX 画面渲染耗时可达 100 小时。卡冈图雅设定为质量约 10⁸ M☉、近极端自旋的超大质量黑洞。本页面以史瓦西近似 + 实时着色器，在浏览器里重现它的神韵。</p>
+
+      <h3>⑦ 操作</h3>
+      <p class="keys">
+        <span><kbd>拖拽</kbd> 旋转视角</span><span><kbd>滚轮</kbd> 缩放</span><span><kbd>双击</kbd> 复位视角</span>
+        <span><kbd>空格</kbd> 暂停吸积</span><span><kbd>H</kbd> 隐藏界面</span><span><kbd>R</kbd> 复位视角</span>
+        <span><kbd>S</kbd> 导出截图</span><span><kbd>F</kbd> 全屏</span><span><kbd>Esc</kbd> 关闭弹窗</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════ 加载幕 ══════════ -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-ring"><span></span></div>
+      <div class="loader-title">GARGANTUA</div>
+      <p class="loader-status" id="loaderStatus">正在求解零测地线 · 编译着色器…</p>
+      <p class="loader-note">DO NOT GO GENTLE INTO THAT GOOD NIGHT</p>
+    </div>
+  </div>
+
+  <!-- ══════════ 致命错误 ══════════ -->
+  <div id="fatal" hidden>
+    <div class="fatal-card">
+      <h2>无法启动渲染器</h2>
+      <p id="fatalMsg"></p>
+      <p class="fatal-tip">请尝试：使用最新版 Chrome / Edge / Firefox；在浏览器设置中开启硬件加速（WebGL）；或更换设备后重新打开本页面。</p>
+    </div>
+  </div>
+
+  <!-- 自检输出（?selftest=1） -->
+  <pre id="selftest" hidden></pre>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script>
+  /* 本地 three.js 缺失时回退到 CDN（需联网） */
+  if (!window.THREE) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"><\/script>');
+  }
+</script>
+<script src="js/shaders.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

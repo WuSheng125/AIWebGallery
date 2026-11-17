@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GARGANTUA — 广义相对论黑洞可视化</title>
+    <script type="module" crossorigin src="./assets/index-DcMv_4Qe.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-AUS9YZPm.css">
+  </head>
+  <body>
+    <div id="app">
+      <div id="viewport-wrap">
+        <canvas id="gl-canvas"></canvas>
+
+        <!-- 左上角极简电影感 HUD -->
+        <header class="hud-brand">
+          <div class="brand-kicker">RELATIVISTIC RAYTRACING ENGINE</div>
+          <h1 class="brand-title">GARGANTUA <span class="badge">KERR · LENSING</span></h1>
+          <div class="hud-telemetry" id="telemetry">
+            <span>FPS <strong id="fps-val">60</strong></span>
+            <span class="sep">·</span>
+            <span>倾角 <strong id="incl-val">7.5°</strong></span>
+            <span class="sep">·</span>
+            <span>距离 <strong id="dist-val">18.0 r<sub>s</sub></strong></span>
+          </div>
+        </header>
+
+        <!-- 左下角操作提示 -->
+        <div class="hud-hint" id="hud-hint">
+          <span>左键拖拽旋转视角</span>
+          <span class="sep">·</span>
+          <span>滚轮缩放距离</span>
+          <span class="sep">·</span>
+          <span>右键平移构图</span>
+          <span class="sep">·</span>
+          <span>双击重置</span>
+        </div>
+      </div>
+
+      <!-- 侧边栏切换按钮（收起后可见） -->
+      <button id="sidebar-toggle" class="sidebar-toggle" type="button" title="展开/收起控制面板" aria-label="展开或收起控制面板">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+
+      <!-- 右侧参数调节面板 -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div>
+            <div class="panel-eyebrow">SIMULATION PARAMETERS</div>
+            <h2 class="panel-title">黑洞参数控制</h2>
+          </div>
+          <button id="btn-pause" class="icon-btn" type="button" title="暂停/继续时间演化">
+            <span id="pause-icon">❚❚</span>
+          </button>
+        </div>
+
+        <div class="sidebar-scroll">
+          <!-- 预设场景 -->
+          <section class="control-group">
+            <div class="group-title">预设构图 Presets</div>
+            <div class="preset-grid" id="preset-grid">
+              <button class="preset-btn active" data-preset="gargantua" type="button">
+                <span class="preset-name">卡冈图雅</span>
+                <span class="preset-desc">电影经典低倾角</span>
+              </button>
+              <button class="preset-btn" data-preset="interstellar-high" type="button">
+                <span class="preset-name">高空俯瞰</span>
+                <span class="preset-desc">清晰双层光子环</span>
+              </button>
+              <button class="preset-btn" data-preset="extreme-kerr" type="button">
+                <span class="preset-name">极端自旋</span>
+                <span class="preset-desc">强多普勒蓝移</span>
+              </button>
+              <button class="preset-btn" data-preset="cold-quasar" type="button">
+                <span class="preset-name">幽蓝类星体</span>
+                <span class="preset-desc">高温等离子吸积盘</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- 时空与引力 -->
+          <section class="control-group">
+            <div class="group-title">时空度规 &amp; 引力透镜</div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-mass">黑洞质量 / 事件视界半径</label>
+                <span class="val" id="val-mass">1.00</span>
+              </div>
+              <input id="param-mass" type="range" min="0.55" max="1.65" step="0.01" value="1.00" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-spin">黑洞自旋 (Kerr 拖拽 &amp; 帧拖曳)</label>
+                <span class="val" id="val-spin">0.85</span>
+              </div>
+              <input id="param-spin" type="range" min="0.00" max="0.99" step="0.01" value="0.85" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-lensing">引力透镜偏折强度</label>
+                <span class="val" id="val-lensing">1.00</span>
+              </div>
+              <input id="param-lensing" type="range" min="0.40" max="1.60" step="0.01" value="1.00" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-photonRing">光子环 / 爱因斯坦环亮度</label>
+                <span class="val" id="val-photonRing">1.10</span>
+              </div>
+              <input id="param-photonRing" type="range" min="0.00" max="2.50" step="0.05" value="1.10" />
+            </div>
+          </section>
+
+          <!-- 吸积盘物理 -->
+          <section class="control-group">
+            <div class="group-title">吸积盘物理 Accretion Disk</div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-diskOuter">吸积盘外径</label>
+                <span class="val" id="val-diskOuter">6.80</span>
+              </div>
+              <input id="param-diskOuter" type="range" min="3.50" max="11.00" step="0.10" value="6.80" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-diskThickness">吸积盘厚度</label>
+                <span class="val" id="val-diskThickness">0.14</span>
+              </div>
+              <input id="param-diskThickness" type="range" min="0.04" max="0.55" step="0.01" value="0.14" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-diskSpeed">开普勒旋转速度</label>
+                <span class="val" id="val-diskSpeed">1.00</span>
+              </div>
+              <input id="param-diskSpeed" type="range" min="0.00" max="3.00" step="0.05" value="1.00" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-doppler">相对论多普勒聚束</label>
+                <span class="val" id="val-doppler">0.72</span>
+              </div>
+              <input id="param-doppler" type="range" min="0.00" max="1.40" step="0.02" value="0.72" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-turbulence">等离子体湍流细节</label>
+                <span class="val" id="val-turbulence">1.00</span>
+              </div>
+              <input id="param-turbulence" type="range" min="0.10" max="2.00" step="0.05" value="1.00" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-temperature">黑体色温 (K 相对标度)</label>
+                <span class="val" id="val-temperature">1.00</span>
+              </div>
+              <input id="param-temperature" type="range" min="0.55" max="1.75" step="0.01" value="1.00" />
+            </div>
+          </section>
+
+          <!-- 宇宙背景与后期 -->
+          <section class="control-group">
+            <div class="group-title">深空星场 &amp; 电影光学后期</div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-starDensity">背景星辰密度</label>
+                <span class="val" id="val-starDensity">1.00</span>
+              </div>
+              <input id="param-starDensity" type="range" min="0.00" max="2.20" step="0.05" value="1.00" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-nebula">深空尘埃与星云亮度</label>
+                <span class="val" id="val-nebula">0.65</span>
+              </div>
+              <input id="param-nebula" type="range" min="0.00" max="1.60" step="0.05" value="0.65" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-bloom">电影辉光强度 Bloom</label>
+                <span class="val" id="val-bloom">0.42</span>
+              </div>
+              <input id="param-bloom" type="range" min="0.00" max="1.20" step="0.02" value="0.42" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-head">
+                <label for="param-exposure">曝光度 Exposure</label>
+                <span class="val" id="val-exposure">1.00</span>
+              </div>
+              <input id="param-exposure" type="range" min="0.45" max="1.85" step="0.02" value="1.00" />
+            </div>
+          </section>
+
+          <!-- 渲染质量 -->
+          <section class="control-group">
+            <div class="group-title">性能与采样精度</div>
+            <div class="segmented" id="quality-segmented">
+              <button class="seg-btn" data-quality="low" type="button">流畅 (0.65×)</button>
+              <button class="seg-btn active" data-quality="medium" type="button">均衡 (0.85×)</button>
+              <button class="seg-btn" data-quality="high" type="button">电影级 (1.0×)</button>
+            </div>
+            <label class="toggle-row">
+              <span>自动环绕运镜</span>
+              <input id="param-autoOrbit" type="checkbox" />
+              <span class="toggle-ui"></span>
+            </label>
+          </section>
+        </div>
+
+        <footer class="sidebar-footer">
+          <button id="btn-reset" class="action-btn secondary" type="button">恢复卡冈图雅默认</button>
+          <button id="btn-screenshot" class="action-btn primary" type="button">导出高清截图</button>
+        </footer>
+      </aside>
+    </div>
+
+  </body>
+</html>
